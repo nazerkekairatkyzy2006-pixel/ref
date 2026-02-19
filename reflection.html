@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EduPhysics AI • Рефлексия (ерекше)</title>
+  <style>
+    :root{
+      --bg:#050711;
+      --paper:#0c1222;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.06);
+      --text:#edf3ff;
+      --muted:#a9b7d6;
+      --a:#22d3ee;
+      --b:#7c3aed;
+      --c:#fb7185;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(850px 540px at 15% 10%, rgba(34,211,238,.12), transparent 55%),
+        radial-gradient(850px 560px at 85% 15%, rgba(124,58,237,.14), transparent 55%),
+        radial-gradient(900px 560px at 50% 95%, rgba(251,113,133,.10), transparent 55%),
+        linear-gradient(180deg, #050711, #030410);
+      min-height:100vh;
+      padding:16px;
+    }
+
+    .wrap{max-width:980px;margin:0 auto;display:grid;gap:14px}
+
+    .top{
+      border-radius: var(--radius);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(12,18,34,.92), rgba(10,16,32,.80));
+      box-shadow: var(--shadow);
+      padding:16px;
+      position:relative; overflow:hidden;
+    }
+    .top::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(700px 240px at 15% 0%, rgba(34,211,238,.18), transparent 65%),
+        radial-gradient(700px 260px at 90% 30%, rgba(124,58,237,.16), transparent 70%);
+      pointer-events:none;
+    }
+    h1{margin:0;font-size:clamp(18px,2.6vw,28px)}
+    .muted{color:var(--muted);font-size:13px;line-height:1.55;margin-top:8px}
+    .nav{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.35);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      transition:.18s;
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn:hover{transform:translateY(-1px); border-color: rgba(34,211,238,.35)}
+    .btn.primary{
+      border:0; color:#031018;
+      background: linear-gradient(90deg, var(--a), var(--b));
+    }
+
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width:900px){
+      .grid{grid-template-columns: 1fr 1fr}
+    }
+
+    .card{
+      border-radius: var(--radius);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(12,18,34,.92), rgba(10,16,32,.82));
+      box-shadow: var(--shadow);
+      padding:14px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:13px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.35);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .hr{height:1px;background:var(--stroke2);margin:12px 0}
+
+    textarea, select, input[type="text"]{
+      width:100%;
+      padding:10px 11px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.30);
+      color: var(--text);
+      outline:none;
+    }
+    textarea{min-height:110px;resize:vertical}
+    label{display:block;margin:8px 0 6px;font-size:13px;color:rgba(237,243,255,.92)}
+
+    .moods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .mood{
+      cursor:pointer;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.25);
+      transition:.15s;
+    }
+    .mood:hover{border-color:rgba(34,211,238,.35); transform:translateY(-1px)}
+    .mood.active{border-color:rgba(124,58,237,.55); background: rgba(124,58,237,.12)}
+    .mood b{display:block;font-size:13px}
+    .mood span{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+
+    .meter{
+      border:1px solid var(--stroke);
+      border-radius: 999px;
+      overflow:hidden;
+      background: rgba(7,10,18,.28);
+      height: 12px;
+    }
+    .meter > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--a), var(--b));
+      transition: width .25s ease;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.25);
+      cursor:pointer;
+      font-weight:900;
+      font-size:12px;
+      margin:6px 6px 0 0;
+    }
+    .chip.active{border-color:rgba(34,211,238,.45); background: rgba(34,211,238,.10)}
+    .suggest{
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(7,10,18,.18);
+      border-radius: 16px;
+      padding:12px;
+      color: rgba(237,243,255,.92);
+      line-height:1.5;
+      font-size:13px;
+    }
+
+    .small{font-size:12px;color:var(--muted)}
+    pre{white-space:pre-wrap; margin:0; font-size:12px; color: rgba(237,243,255,.92)}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <section class="top">
+    <h1>Рефлексия (ерекше формат): Mood + 4R + Қателік картасы</h1>
+    <p class="muted">
+      Бұл бет <b>стандарттан тыс</b>: сен эмоцияңды белгілейсің, ойыңды 4 бөліммен жинақтайсың,
+      қай жерде қиналғаныңды карта арқылы көрсетесің, ал платформа сенің нәтижеге қарай нақты ұсыныс береді.
+    </p>
+    <div class="nav">
+      <a class="btn" href="index.html">← 1-бетке қайту</a>
+      <button class="btn primary" id="btnCopy">Рефлексияны көшіру</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1) Менің нәтижем</h2>
+    <div class="row">
+      <span class="pill">Жалпы: <b id="total">0</b>/100</span>
+      <span class="pill">Тест: <b id="t">0</b>/30</span>
+      <span class="pill">Қате: <b id="q">0</b>/30</span>
+      <span class="pill">Кроссворд: <b id="c">0</b>/40</span>
+    </div>
+    <div class="hr"></div>
+    <div class="small">Прогресс шкаласы</div>
+    <div class="meter" aria-label="progress meter"><div id="bar"></div></div>
+    <p class="muted" id="autoComment" style="margin-top:10px;"></p>
+  </section>
+
+  <div class="grid">
+
+    <section class="card">
+      <h2>2) Mood таңдау</h2>
+      <p class="muted">Қандай күйде шықтың? Біреуін таңда.</p>
+      <div class="moods" id="moods">
+        <div class="mood" data-m="🔥"><b>🔥 Қуаттымын</b><span>Бәрін сенімді орындадым</span></div>
+        <div class="mood" data-m="🙂"><b>🙂 Жақсы</b><span>Жалпы түсіндім, аздап қате бар</span></div>
+        <div class="mood" data-m="😶"><b>😶 Бейтарап</b><span>Орташа, қайталау керек</span></div>
+        <div class="mood" data-m="😕"><b>😕 Қиындау</b><span>Кей жері түсініксіз</span></div>
+        <div class="mood" data-m="😣"><b>😣 Қиналдым</b><span>Көмек керек болды</span></div>
+        <div class="mood" data-m="🚀"><b>🚀 Мақсатым бар</b><span>Келесіде жақсырақ жасаймын</span></div>
+      </div>
+      <div class="hr"></div>
+      <label>Бүгінгі бір сөйлемдік қорытынды</label>
+      <input id="oneLine" type="text" placeholder="Мысалы: Бүгін магнит өрісінің күш сызықтарының бағытын нақты түсіндім." />
+    </section>
+
+    <section class="card">
+      <h2>3) Қателік картасы</h2>
+      <p class="muted">Қай бөлім қиналдырды? Бірнешеуін белгілей аласың.</p>
+      <div id="chips"></div>
+      <div class="hr"></div>
+      <label>Ең жиі қате жібергенім</label>
+      <textarea id="mistake" placeholder="Қай жерде қате кетеді? Неге?"></textarea>
+      <label>Оны қалай түзетем?</label>
+      <textarea id="fix" placeholder="Қандай қадам жасаймын? (мыс: анықтама оқу, 5 сұрақ шығару, кроссвордта 2 сөзді қайта жасау)"></textarea>
+    </section>
+
+  </div>
+
+  <section class="card">
+    <h2>4) 4R рефлексиясы (ерекше формат)</h2>
+    <p class="muted">
+      4R = <b>Recall</b> (не істедім), <b>Reason</b> (неге солай болды),
+      <b>Refine</b> (қалай жақсартам), <b>Roadmap</b> (келесі жоспар).
+    </p>
+
+    <label>Recall — бүгін қандай 2 тапсырма орындадым?</label>
+    <textarea id="r1" placeholder="Мысалы: мини-тест, “Қате қайда?”, кроссворд..."></textarea>
+
+    <label>Reason — жақсы/қиын болған себебі неде?</label>
+    <textarea id="r2" placeholder="Мысалы: N→S бағытын білем, бірақ ферромагнетизм сөзін шатастырдым..."></textarea>
+
+    <label>Refine — келесіде жақсарту үшін 2 әрекет</label>
+    <textarea id="r3" placeholder="1) ...  2) ..."></textarea>
+
+    <label>Roadmap — 10 минуттық жоспар (нақты)</label>
+    <textarea id="r4" placeholder="Мысалы: 3 мин анықтама, 4 мин 5 сұрақ, 3 мин кроссворд қайта тексеру"></textarea>
+
+    <div class="hr"></div>
+    <h2>5) Авто-ұсыныс</h2>
+    <div class="suggest" id="suggest"></div>
+
+    <div class="hr"></div>
+    <div class="row">
+      <button class="btn primary" id="btnSave">Сақтау</button>
+      <span class="pill">Сақталды: <b id="saved">0</b></span>
+    </div>
+
+    <div class="hr"></div>
+    <div class="small">Көшіруге дайын мәтін (апайға/есепке):</div>
+    <pre id="out"></pre>
+  </section>
+
+</div>
+
+<script>
+  const $ = (id)=>document.getElementById(id);
+  const clamp=(x,min,max)=>Math.max(min,Math.min(max,x));
+
+  // 1-беттен келген ұпайларды оқимыз
+  const raw = localStorage.getItem("edu_magnet_state");
+  let s = {testScore:0, taskScore:0, cwScore:0, traffic:""};
+  try{ if(raw) s = {...s, ...JSON.parse(raw)}; }catch(e){}
+
+  const total = (s.testScore||0) + (s.taskScore||0) + (s.cwScore||0);
+
+  $("t").textContent = s.testScore||0;
+  $("q").textContent = s.taskScore||0;
+  $("c").textContent = s.cwScore||0;
+  $("total").textContent = total;
+  $("bar").style.width = clamp(total,0,100) + "%";
+
+  // авто-коммент
+  const auto = $("autoComment");
+  if(total >= 85) auto.textContent = "Жоғары нәтиже! Сен негізгі ұғымдарды да, терминдерді де жақсы меңгергенсің.";
+  else if(total >= 60) auto.textContent = "Жақсы! Кейбір тұстарды қайталасаң, деңгейің тез өседі.";
+  else auto.textContent = "Бастапқы деңгей. Уайымдама: төмендегі жоспар көмектеседі — аз қадаммен көтереміз.";
+
+  // chips (қателік картасы)
+  const chipData = [
+    {id:"def", label:"Анықтамалар"},
+    {id:"dir", label:"N→S бағыты"},
+    {id:"pol", label:"Полюстер әсерлесуі"},
+    {id:"dens",label:"Сызық тығыздығы"},
+    {id:"mat", label:"Материалдар (болат, никель)"},
+    {id:"terms",label:"Терминдер (кроссворд)"},
+  ];
+
+  const chipBox = $("chips");
+  const chosen = new Set();
+
+  chipData.forEach(x=>{
+    const el=document.createElement("span");
+    el.className="chip";
+    el.textContent = x.label;
+    el.dataset.id = x.id;
+    el.addEventListener("click", ()=>{
+      if(chosen.has(x.id)){ chosen.delete(x.id); el.classList.remove("active"); }
+      else { chosen.add(x.id); el.classList.add("active"); }
+      updateSuggest();
+      buildOut();
+    });
+    chipBox.appendChild(el);
+  });
+
+  // moods
+  let mood = "";
+  document.querySelectorAll(".mood").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
+      el.classList.add("active");
+      mood = el.dataset.m;
+      updateSuggest();
+      buildOut();
+    });
+  });
+
+  function updateSuggest(){
+    const sug = $("suggest");
+    // ұпайға қарай ұсыныс
+    let base = "";
+    if(total >= 85) base = "Сенде бәрі жақсы! Енді білімді бекіту үшін 1 нақты мысал айтып, 1 қысқа схема сызсаң жетеді.";
+    else if(total >= 60) base = "Келесі қадам: әлсіз бөлімді таңдап, 5 тез сұрақ + кроссвордтағы 2 сөзді қайта тексер.";
+    else base = "Қадамдап жоспар: 1) анықтама оқу (3 мин), 2) N→S бағыты (2 мин), 3) 5 сұрақ (3 мин), 4) кроссворд (2 мин).";
+
+    const focus = chosen.size ? ("Назар аударатын бөлім(дер): " + [...chosen].map(id=>chipData.find(x=>x.id===id)?.label).filter(Boolean).join(", ") + ".")
+                             : "Назар аударатын бөлім: өзің таңда (чиптер арқылы).";
+
+    const moodLine = mood ? `Күйім: ${mood}.` : "Күйім: таңдалмады.";
+    sug.innerHTML = `<b>Авто-ұсыныс:</b> ${base}<br><br>${focus}<br>${moodLine}`;
+  }
+
+  // build output text
+  function buildOut(){
+    const one = $("oneLine").value.trim() || "(жазылмады)";
+    const m1 = $("mistake").value.trim() || "(жазылмады)";
+    const f1 = $("fix").value.trim() || "(жазылмады)";
+    const r1 = $("r1").value.trim() || "(жазылмады)";
+    const r2 = $("r2").value.trim() || "(жазылмады)";
+    const r3 = $("r3").value.trim() || "(жазылмады)";
+    const r4 = $("r4").value.trim() || "(жазылмады)";
+
+    const focus = chosen.size ? [...chosen].map(id=>chipData.find(x=>x.id===id)?.label).filter(Boolean).join(", ") : "(таңдалмады)";
+
+    const text =
+`EduPhysics AI — Рефлексия (Тұрақты магниттер)
+
+Нәтиже: ${total}/100
+- Тест: ${s.testScore||0}/30
+- “Қате қайда?”: ${s.taskScore||0}/30
+- Кроссворд: ${s.cwScore||0}/40
+
+Mood: ${mood || "(таңдалмады)"}
+Бір сөйлем: ${one}
+
+Қателік картасы: ${focus}
+Ең жиі қате: ${m1}
+Түзету жолы: ${f1}
+
+4R:
+Recall: ${r1}
+Reason: ${r2}
+Refine: ${r3}
+Roadmap: ${r4}
+`;
+    $("out").textContent = text;
+  }
+
+  // update on typing
+  ["oneLine","mistake","fix","r1","r2","r3","r4"].forEach(id=>{
+    $(id).addEventListener("input", buildOut);
+  });
+
+  // save
+  let savedCount = 0;
+  $("btnSave").addEventListener("click", ()=>{
+    savedCount += 1;
+    $("saved").textContent = savedCount;
+    localStorage.setItem("edu_magnet_reflection", JSON.stringify({
+      total, scores: s, mood,
+      oneLine: $("oneLine").value,
+      chosen: [...chosen],
+      mistake: $("mistake").value,
+      fix: $("fix").value,
+      r1:$("r1").value, r2:$("r2").value, r3:$("r3").value, r4:$("r4").value,
+      savedAt: new Date().toISOString()
+    }));
+    buildOut();
+  });
+
+  // copy
+  $("btnCopy").addEventListener("click", ()=>{
+    buildOut();
+    const txt = $("out").textContent;
+    navigator.clipboard?.writeText(txt).catch(()=>{});
+  });
+
+  // init suggestions & out
+  updateSuggest();
+  buildOut();
+
+  // load previous reflection if any
+  const prevRaw = localStorage.getItem("edu_magnet_reflection");
+  if(prevRaw){
+    try{
+      const prev = JSON.parse(prevRaw);
+      $("oneLine").value = prev.oneLine || "";
+      $("mistake").value = prev.mistake || "";
+      $("fix").value = prev.fix || "";
+      $("r1").value = prev.r1 || "";
+      $("r2").value = prev.r2 || "";
+      $("r3").value = prev.r3 || "";
+      $("r4").value = prev.r4 || "";
+      (prev.chosen||[]).forEach(id=>{
+        chosen.add(id);
+        document.querySelectorAll(".chip").forEach(ch=>{
+          if(ch.dataset.id===id) ch.classList.add("active");
+        });
+      });
+      mood = prev.mood || "";
+      if(mood){
+        document.querySelectorAll(".mood").forEach(m=>{
+          if(m.dataset.m===mood) m.classList.add("active");
+        });
+      }
+      updateSuggest();
+      buildOut();
+    }catch(e){}
+  }
+</script>
+</body>
+</html>
