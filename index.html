@@ -3,57 +3,385 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Тұрақты магниттер — ҚБ платформасы</title>
+  <title>EduPhysics AI • Тұрақты магниттер (ҚБ платформа)</title>
   <style>
-    :root{--bg:#0b1220;--card:#121a2b;--text:#eaf0ff;--muted:#a9b4d6;--ok:#2dd4bf;--warn:#fbbf24;--bad:#fb7185;}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#0b1220,#070b14);color:var(--text)}
-    header{padding:22px 16px;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;background:rgba(11,18,32,.85);backdrop-filter:blur(10px);z-index:5}
-    header h1{margin:0;font-size:18px}
-    header p{margin:6px 0 0;color:var(--muted);font-size:13px}
-    main{max-width:980px;margin:0 auto;padding:16px;display:grid;gap:14px}
-    .grid{display:grid;grid-template-columns:1fr;gap:14px}
-    @media (min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
-    .card{background:rgba(18,26,43,.92);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 14px 12px}
-    .card h2{margin:0 0 10px;font-size:15px}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid rgba(255,255,255,.12);border-radius:999px;color:var(--muted);font-size:12px}
-    .btn{cursor:pointer;border:0;border-radius:12px;padding:10px 12px;background:#1b2742;color:var(--text);font-weight:600}
-    .btn:hover{filter:brightness(1.08)}
-    .btn.primary{background:linear-gradient(90deg,#2563eb,#22c55e)}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.12)}
-    .muted{color:var(--muted);font-size:13px}
-    .q{padding:10px;border:1px solid rgba(255,255,255,.10);border-radius:14px;margin:10px 0;background:rgba(0,0,0,.12)}
-    label{display:block;margin:6px 0;font-size:13px}
-    input[type="text"], textarea, select{
-      width:100%;padding:10px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.18);color:var(--text);outline:none
+    /* ─────────────────────────────────────────────────────────────
+       ДИЗАЙН (басқаша): “Neon Paper + Grid”
+       ───────────────────────────────────────────────────────────── */
+    :root{
+      --bg:#070a12;
+      --paper:#0c1222;
+      --paper2:#0a1020;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.06);
+      --text:#edf3ff;
+      --muted:#a9b7d6;
+
+      --a:#7c3aed; /* violet */
+      --b:#22d3ee; /* cyan */
+      --c:#fb7185; /* rose */
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+
+      --shadow: 0 18px 60px rgba(0,0,0,.50);
+      --radius: 18px;
     }
-    textarea{min-height:90px;resize:vertical}
-    .score{font-size:26px;font-weight:800}
-    .tag{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700}
-    .tag.ok{background:rgba(45,212,191,.15);color:var(--ok);border:1px solid rgba(45,212,191,.35)}
-    .tag.warn{background:rgba(251,191,36,.13);color:var(--warn);border:1px solid rgba(251,191,36,.35)}
-    .tag.bad{background:rgba(251,113,133,.12);color:var(--bad);border:1px solid rgba(251,113,133,.35)}
-    .badge{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:14px;border:1px dashed rgba(255,255,255,.18);background:rgba(0,0,0,.10)}
-    .badges{display:grid;gap:10px}
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(34,211,238,.14), transparent 55%),
+        radial-gradient(900px 550px at 85% 15%, rgba(124,58,237,.16), transparent 55%),
+        radial-gradient(900px 600px at 70% 85%, rgba(251,113,133,.10), transparent 60%),
+        linear-gradient(180deg, #070a12, #050711);
+      overflow-x:hidden;
+    }
+
+    /* subtle grid */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+      opacity:.25;
+      mask-image: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,1) 0%, rgba(0,0,0,.2) 60%, transparent 100%);
+    }
+
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(12px);
+      background: rgba(7,10,18,.70);
+      border-bottom:1px solid var(--stroke2);
+    }
+    .topbar{
+      max-width:1120px;
+      margin:0 auto;
+      padding:16px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .brand b{
+      font-size:14px; letter-spacing:.08em; text-transform:uppercase;
+      background: linear-gradient(90deg, var(--b), var(--a));
+      -webkit-background-clip:text; background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .brand span{font-size:12px;color:var(--muted)}
+    .nav{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:9px 12px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(12,18,34,.55);
+      color:var(--text);
+      text-decoration:none;
+      font-weight:700;
+      font-size:12px;
+      letter-spacing:.04em;
+      transition:.18s;
+    }
+    .chip:hover{transform:translateY(-1px); border-color:rgba(34,211,238,.35)}
+    .chip .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, var(--b), var(--a));
+      box-shadow: 0 0 18px rgba(34,211,238,.35);
+    }
+
+    main{
+      max-width:1120px;
+      margin:0 auto;
+      padding:16px;
+      display:grid;
+      gap:14px;
+    }
+
+    .hero{
+      border-radius: var(--radius);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(12,18,34,.85), rgba(10,16,32,.72));
+      box-shadow: var(--shadow);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 220px at 20% 0%, rgba(34,211,238,.18), transparent 65%),
+                  radial-gradient(700px 260px at 90% 20%, rgba(124,58,237,.16), transparent 70%);
+      pointer-events:none;
+    }
+    .hero h1{
+      margin:0;
+      font-size: clamp(18px, 2.6vw, 28px);
+      letter-spacing:.02em;
+    }
+    .hero p{
+      margin:8px 0 0;
+      color: var(--muted);
+      line-height:1.5;
+      font-size:13px;
+      max-width: 85ch;
+    }
+
+    .grid{
+      display:grid; grid-template-columns: 1fr; gap:14px;
+    }
+    @media (min-width:980px){
+      .grid{grid-template-columns: 1.25fr .75fr;}
+    }
+
+    .card{
+      border-radius: var(--radius);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(12,18,34,.92), rgba(10,16,32,.82));
+      box-shadow: var(--shadow);
+      padding:14px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(237,243,255,.95);
+    }
+    .muted{color:var(--muted); font-size:13px; line-height:1.55}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .hr{height:1px;background:var(--stroke2); margin:12px 0}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.35);
+      color: var(--muted);
+      font-size:12px;
+    }
+    .tag{
+      display:inline-flex; align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.04em;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.35);
+    }
+    .tag.ok{color:var(--ok); border-color:rgba(52,211,153,.35)}
+    .tag.warn{color:var(--warn); border-color:rgba(251,191,36,.35)}
+    .tag.bad{color:var(--bad); border-color:rgba(251,113,133,.35)}
+
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.35);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      transition:.18s;
+    }
+    .btn:hover{transform:translateY(-1px); border-color: rgba(34,211,238,.35)}
+    .btn.primary{
+      border:0;
+      background: linear-gradient(90deg, var(--b), var(--a));
+      color:#031018;
+      box-shadow: 0 12px 30px rgba(34,211,238,.10);
+    }
+    .btn.danger{
+      border:0;
+      background: linear-gradient(90deg, var(--c), #f97316);
+      color:#180607;
+    }
+
+    .q{
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.28);
+      border-radius: 16px;
+      padding:12px;
+      margin:10px 0;
+    }
+    .q b{color:rgba(237,243,255,.95)}
+    label{
+      display:block;
+      margin:7px 0;
+      font-size:13px;
+      color: rgba(237,243,255,.90);
+    }
+    input[type="text"], textarea, select{
+      width:100%;
+      padding:10px 11px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.30);
+      color: var(--text);
+      outline:none;
+    }
+    textarea{min-height:90px; resize:vertical}
+
+    .scoreBig{font-size:30px;font-weight:900; letter-spacing:.02em}
+    .badge{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(7,10,18,.25);
+    }
+    .badges{display:grid; gap:10px}
     .small{font-size:12px;color:var(--muted)}
-    .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
-    .hint{font-size:12px;color:var(--muted);margin-top:6px}
-    .list{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+    .hint{font-size:12px;color:var(--muted); margin-top:6px}
+
+    /* ─────────────────────────────────────────────────────────────
+       КРОССВОРД (встроенный) — стиль совместимый с темой
+       ───────────────────────────────────────────────────────────── */
+    .cw-wrap{
+      border-radius: var(--radius);
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.22);
+      padding:14px;
+    }
+    .cw-head{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      flex-wrap:wrap;
+    }
+    .cw-head h3{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .cw-grid{
+      display:inline-grid;
+      gap:1px;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      overflow:hidden;
+      margin-top:12px;
+    }
+    .cw-cell{
+      width:34px; height:34px;
+      background: rgba(7,10,18,.55);
+      position:relative;
+    }
+    .cw-cell.active{background: rgba(12,18,34,.88)}
+    .cw-cell .num{
+      position:absolute; top:2px; left:3px;
+      font-size:9px;
+      color: rgba(34,211,238,.9);
+      font-weight:900;
+      pointer-events:none;
+    }
+    .cw-cell input{
+      width:100%; height:100%;
+      border:0; outline:0;
+      background: transparent;
+      color: var(--text);
+      text-transform:uppercase;
+      text-align:center;
+      font-weight:900;
+      font-size:14px;
+      padding-top:8px;
+      caret-color: var(--b);
+    }
+    .cw-cell.correct input{color: var(--ok)}
+    .cw-cell.wrong input{color: var(--bad)}
+    .cw-cell.highlight{background: rgba(34,211,238,.12)}
+    .cw-cell.selected{background: rgba(124,58,237,.18)}
+
+    .cw-cols{
+      display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;
+    }
+    .cw-col{
+      flex:1 1 280px;
+      border:1px solid var(--stroke2);
+      border-radius: 14px;
+      background: rgba(12,18,34,.55);
+      padding:12px;
+    }
+    .cw-col h4{
+      margin:0 0 10px;
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color: rgba(251,191,36,.95);
+    }
+    .cw-clue{
+      display:flex; gap:8px;
+      padding:7px 6px;
+      border-radius: 10px;
+      border:1px solid transparent;
+      cursor:pointer;
+      transition:.15s;
+    }
+    .cw-clue:hover{border-color:rgba(34,211,238,.25); background: rgba(7,10,18,.25)}
+    .cw-clue .n{min-width:22px; color: rgba(34,211,238,.95); font-weight:900}
+    .cw-clue .t{color: rgba(237,243,255,.85); font-size:13px; line-height:1.35}
+
+    .cw-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .cw-result{margin-top:10px; font-weight:900; letter-spacing:.02em}
+    .cw-result.ok{color: var(--ok)}
+    .cw-result.warn{color: var(--warn)}
+
+    @media (max-width:640px){
+      .cw-cell{width:28px;height:28px}
+      .cw-cell input{font-size:12px; padding-top:6px}
+      .cw-cell .num{font-size:7px}
+    }
   </style>
 </head>
 
 <body>
 <header>
-  <h1>Тұрақты магниттер — Қалыптастырушы бағалау платформасы</h1>
-  <p>Авто-бағалау + кері байланыс + геймификация (стандарттан тыс элемент) + рефлексия 3-2-1</p>
+  <div class="topbar">
+    <div class="brand">
+      <b>EduPhysics AI</b>
+      <span>ҚБ платформасы • 8-сынып • Тұрақты магниттер</span>
+    </div>
+    <nav class="nav">
+      <a class="chip" href="#tasks"><span class="dot"></span>Тест + ҚБ</a>
+      <a class="chip" href="#crossword"><span class="dot"></span>Кроссворд</a>
+      <a class="chip" href="reflection.html"><span class="dot"></span>Рефлексия беті →</a>
+    </nav>
+  </div>
 </header>
 
 <main>
-  <div class="grid">
+  <section class="hero">
+    <h1>Тұрақты магниттер: авто-бағалау + кері байланыс + геймификация</h1>
+    <p>
+      Бұл платформада сен алдымен <b>мини-тест</b> және <b>“Қате қайда?”</b> тапсырмасын орындайсың.
+      Кейін төменде <b>кроссворд</b> шешесің. Барлығы автомат бағаланып, деңгей/бейдж шығады.
+      Соңында “Рефлексия” бетіне өтіп, ерекше рефлексия толтырасың.
+    </p>
+  </section>
 
-    <!-- ЛЕВАЯ КОЛОНКА -->
+  <div class="grid" id="tasks">
+
+    <!-- LEFT -->
     <section class="card">
       <h2>1) Мини-тест (автоматты тексеріледі)</h2>
       <p class="muted">Мақсат: негізгі ұғымдарды жылдам тексеру (8.4.3.1–8.4.3.3).</p>
@@ -84,30 +412,33 @@
 
       <div class="row">
         <button class="btn primary" id="btnCheck">Тексеру</button>
-        <button class="btn ghost" id="btnReset">Қайта бастау</button>
+        <button class="btn" id="btnReset">Қайта бастау</button>
         <span class="pill">Тест ұпайы: <b id="testScore">0</b>/30</span>
       </div>
 
       <div class="hr"></div>
 
       <h2>2) ҚБ тапсырмасы: “Қате қайда?”</h2>
-      <p class="muted">Төмендегі 4 тұжырымның қайсысы қате? Қате болса — дұрысын жаз.</p>
+      <p class="muted">Төмендегі тұжырымдарды бағалап, қате болса — дұрысын жаз.</p>
 
       <div class="q">
         <label>а) “Магнитті қақ бөлсе, тек N полюсі бар бөлік шығады.” (дұрысы?)</label>
         <input type="text" id="fixA" placeholder="Мысалы: әр бөлік жаңа магнит болады, екеуінде де N және S бар" />
-        <label class="hint">б) “Сыртқы кеңістікте күш сызықтары N→S.” (қате/дұрыс?)</label>
+
+        <label class="hint">б) “Сыртқы кеңістікте күш сызықтары N→S.”</label>
         <select id="fixB">
           <option value="">Таңда…</option>
           <option value="true">Дұрыс</option>
           <option value="false">Қате</option>
         </select>
-        <label class="hint">в) “Ұқсас полюстер тебіледі.” (қате/дұрыс?)</label>
+
+        <label class="hint">в) “Ұқсас полюстер тебіледі.”</label>
         <select id="fixC">
           <option value="">Таңда…</option>
           <option value="true">Дұрыс</option>
           <option value="false">Қате</option>
         </select>
+
         <label class="hint">г) “Күш сызықтары қиылыса алады.” (дұрысы?)</label>
         <input type="text" id="fixD" placeholder="Мысалы: күш сызықтары қиылыспайды" />
       </div>
@@ -119,23 +450,54 @@
 
       <div class="hr"></div>
 
-      <h2>3) Рефлексия 3-2-1 (стандарттан тыс элемент)</h2>
-      <p class="muted">3 нәрсе білдім / 2 қиындық / 1 сұрақ — платформаға жібере саласың.</p>
-      <textarea id="ref321" placeholder="3-2-1 форматы бойынша жаз..."></textarea>
-      <div class="row">
-        <button class="btn primary" id="btnSaveRef">Сақтау</button>
-        <span class="pill">Сақталған: <b id="refSaved">0</b></span>
+      <h2>3) Кроссворд (ҚБ-нің шығармашылық бөлігі)</h2>
+      <p class="muted" id="crossword">
+        Төмендегі кроссворд сөздерін толтыр. “Тексеру” басқанда автомат ұпай шығады.
+        Бұл — сенің стандарттан тыс элементің: цифрлық ойын + авто-бағалау.
+      </p>
+
+      <!-- КРОССВОРД -->
+      <div class="cw-wrap">
+        <div class="cw-head">
+          <div>
+            <h3>Кроссворд: “Тұрақты магниттер”</h3>
+            <div class="small">Кеңес: сөздердің бәрі тақырып терминдері. Ұяшыққа 1 әріп.</div>
+          </div>
+          <span class="pill">Кроссворд ұпайы: <b id="cwScore">0</b>/40</span>
+        </div>
+
+        <div id="cwGrid" class="cw-grid" aria-label="Crossword grid"></div>
+
+        <div class="cw-cols">
+          <div class="cw-col">
+            <h4>→ Көлденең</h4>
+            <div id="cwAcross"></div>
+          </div>
+          <div class="cw-col">
+            <h4>↓ Тік</h4>
+            <div id="cwDown"></div>
+          </div>
+        </div>
+
+        <div class="cw-actions">
+          <button class="btn primary" id="cwCheck">Тексеру</button>
+          <button class="btn" id="cwReveal">Жауабын көрсет</button>
+          <button class="btn danger" id="cwReset">Тазалау</button>
+        </div>
+        <div id="cwMsg" class="cw-result"></div>
       </div>
+
     </section>
 
-    <!-- ПРАВАЯ КОЛОНКА -->
+    <!-- RIGHT -->
     <aside class="card">
       <h2>Нәтиже + кері байланыс</h2>
+
       <div class="row" style="justify-content:space-between;align-items:baseline">
         <div>
-          <div class="muted">Жалпы ҚБ ұпайы (осы платформадан)</div>
-          <div class="score" id="totalScore">0</div>
-          <div class="muted">/ 60 (тест 30 + тапсырма 30)</div>
+          <div class="muted">Жалпы ұпай (осы бет)</div>
+          <div class="scoreBig" id="totalScore">0</div>
+          <div class="muted">/ 100 (тест 30 + қате 30 + кроссворд 40)</div>
         </div>
         <div id="levelTag" class="tag bad">Бастау</div>
       </div>
@@ -160,12 +522,15 @@
       <div class="hr"></div>
 
       <h2>Геймификация: бейдждер</h2>
-      <p class="muted">Ұпайға қарай бейдж ашылады — “стандарттан тыс” элемент ретінде өте жақсы өтеді.</p>
+      <p class="muted">Ұпайға қарай бейдж ашылады.</p>
       <div class="badges" id="badgeBox"></div>
 
       <div class="hr"></div>
 
-      <button class="btn ghost" id="btnExport">Нәтижені көшіру (мәтін)</button>
+      <div class="row">
+        <button class="btn" id="btnToReflection">Рефлексия бетіне өту →</button>
+        <button class="btn primary" id="btnExport">Нәтижені көшіру</button>
+      </div>
       <p class="small" id="exportText" style="white-space:pre-wrap;margin-top:10px;"></p>
 
       <div class="hr"></div>
@@ -176,21 +541,28 @@
 </main>
 
 <script>
-  // ====== НАСТРОЙКИ (ключи ответов) ======
-  const KEY_TEST = { q1:"b", q2:"b", q3:"b" }; // правильные ответы
+/* ============================================================================
+   1-БЕТ ЛОГИКА: Тест + ҚБ + Кроссворд + Фидбек
+   ============================================================================ */
+
+  // ─── ТЕСТ КЛЮЧИ ────────────────────────────────────────────────────────────
+  const KEY_TEST = { q1:"b", q2:"b", q3:"b" };
+
+  // ─── STATE ────────────────────────────────────────────────────────────────
   const state = {
-    testScore: 0, // из 30
-    taskScore: 0, // из 30
+    testScore: 0,   // /30
+    taskScore: 0,   // /30
+    cwScore: 0,     // /40
     reflectionsSaved: 0
   };
 
-  // ====== ВСПОМОГАТЕЛЬНОЕ ======
   const $ = (id) => document.getElementById(id);
   const clamp = (x,min,max)=>Math.max(min,Math.min(max,x));
 
   function computeTotal(){
-    const total = state.testScore + state.taskScore; // /60
+    const total = state.testScore + state.taskScore + state.cwScore; // /100
     $("totalScore").textContent = total;
+    $("cwScore").textContent = state.cwScore;
     updateLevel(total);
     updateRubric(total);
     updateBadges(total);
@@ -198,48 +570,10 @@
   }
 
   function updateLevel(total){
-    // Уровни по сумме /60
-    let tag = $("levelTag");
-    if(total >= 50){ tag.className="tag ok"; tag.textContent="Жоғары деңгей"; }
-    else if(total >= 35){ tag.className="tag warn"; tag.textContent="Орта деңгей"; }
+    const tag = $("levelTag");
+    if(total >= 85){ tag.className="tag ok"; tag.textContent="Жоғары деңгей"; }
+    else if(total >= 60){ tag.className="tag warn"; tag.textContent="Орта деңгей"; }
     else { tag.className="tag bad"; tag.textContent="Бастапқы деңгей"; }
-  }
-
-  function updateRubric(total){
-    // Простая авто-рубрика: интерпретация результатов
-    const box = $("rubricBox");
-    box.innerHTML = "";
-
-    // К1-ұғымдар (тест)
-    const k1 = state.testScore >= 20 ? "✅" : (state.testScore >= 12 ? "⚠️" : "❗");
-    const msg1 = state.testScore >= 20
-      ? "К1: Ұғымдарды жақсы меңгерген."
-      : state.testScore >= 12
-        ? "К1: Ұғымдарда аздап шатасу бар — анықтамаларды қайтала."
-        : "К1: Негізгі ұғымдарды қайта қара (магнит өрісі, полюс, күш сызықтары).";
-
-    // К2-К3 (қате түзету)
-    const k23 = state.taskScore >= 22 ? "✅" : (state.taskScore >= 14 ? "⚠️" : "❗");
-    const msg2 = state.taskScore >= 22
-      ? "К2–К3: Қасиеттер мен күш сызықтарын дұрыс түсіндіреді."
-      : state.taskScore >= 14
-        ? "К2–К3: Бағыт/қасиет бойынша 1–2 қате бар — N→S бағытын есте сақта."
-        : "К2–К3: Полюстер әсерлесуі және күш сызықтарының қиылыспайтынын қайталау керек.";
-
-    // К4 (дәлелдеу): traffic + рефлексия бар болса бонус ретінде
-    const traffic = $("traffic").value;
-    const refTxt = $("ref321").value.trim();
-    let k4icon = "⚠️";
-    let k4msg = "К4: Қысқа дәлелдеу қос (неге солай?).";
-    if(refTxt.length >= 40 && traffic){
-      k4icon="✅"; k4msg="К4: Рефлексия бар, ойыңды нақты жеткізгенсің.";
-    } else if(refTxt.length < 10){
-      k4icon="❗"; k4msg="К4: 3-2-1 рефлексияны толтыр — бұл бағалауға көмектеседі.";
-    }
-
-    box.appendChild(makeBadge(`${k1} ${msg1}`));
-    box.appendChild(makeBadge(`${k23} ${msg2}`));
-    box.appendChild(makeBadge(`${k4icon} ${k4msg}`));
   }
 
   function makeBadge(text){
@@ -249,15 +583,56 @@
     return div;
   }
 
+  function updateRubric(total){
+    const box = $("rubricBox");
+    box.innerHTML = "";
+
+    // К1 — ұғымдар (тест)
+    const k1 = state.testScore >= 20 ? "✅" : (state.testScore >= 12 ? "⚠️" : "❗");
+    const msg1 = state.testScore >= 20
+      ? "К1: Ұғымдарды жақсы меңгерген."
+      : state.testScore >= 12
+        ? "К1: Ұғымдарда аздап шатасу бар — анықтамаларды қайтала."
+        : "К1: Негізгі ұғымдарды қайта қара (магнит өрісі, полюс, күш сызықтары).";
+
+    // К2–К3 — қасиет/сызық (қате түзету)
+    const k23 = state.taskScore >= 22 ? "✅" : (state.taskScore >= 14 ? "⚠️" : "❗");
+    const msg2 = state.taskScore >= 22
+      ? "К2–К3: Қасиеттер мен күш сызықтарын дұрыс түсіндіреді."
+      : state.taskScore >= 14
+        ? "К2–К3: Бағыт/қасиет бойынша 1–2 қате бар — N→S бағытын есте сақта."
+        : "К2–К3: Полюстер әсерлесуі және күш сызықтарының қиылыспайтынын қайталау керек.";
+
+    // Кроссворд — терминдер бекіту
+    const kc = state.cwScore >= 32 ? "✅" : (state.cwScore >= 22 ? "⚠️" : "❗");
+    const msgC = state.cwScore >= 32
+      ? "Терминдер: Кроссвордта көп сөз дұрыс — өте жақсы бекіттің."
+      : state.cwScore >= 22
+        ? "Терминдер: Бірнеше сөзде қате бар — анықтамаларды қарап қайтала."
+        : "Терминдер: Кроссворд қиын болды — сөздікпен бірге қайта орында.";
+
+    // К4 — дәлелдеу: traffic + кейінгі рефлексияға дайындық
+    const traffic = $("traffic").value;
+    let k4icon = traffic ? "✅" : "⚠️";
+    let k4msg = traffic
+      ? "К4: Өзін-өзі бағалау таңдадың. Енді рефлексия бетіне өтіп ойыңды жинақта."
+      : "К4: Traffic light таңда — платформа нақты кеңес береді.";
+
+    box.appendChild(makeBadge(`${k1} ${msg1}`));
+    box.appendChild(makeBadge(`${k23} ${msg2}`));
+    box.appendChild(makeBadge(`${kc} ${msgC}`));
+    box.appendChild(makeBadge(`${k4icon} ${k4msg}`));
+  }
+
   function updateBadges(total){
     const box = $("badgeBox");
     box.innerHTML = "";
 
     const badges = [
-      {name:"Field Starter", need: 15, desc:"Тесттің негізін меңгердің"},
-      {name:"Pole Master", need: 30, desc:"Полюстер/қасиеттер бойынша жақсы"},
-      {name:"Line Navigator", need: 40, desc:"Күш сызықтарын сенімді түсіндіресің"},
-      {name:"Magnet Pro", need: 50, desc:"Жоғары нәтиже, дайынсың!"}
+      {name:"Field Starter", need: 30, desc:"Негізгі ұғымдарды жинадың"},
+      {name:"Pole Master", need: 55, desc:"Полюстер/қасиеттерді жақсы білесің"},
+      {name:"Line Navigator", need: 70, desc:"Күш сызықтары мен бағытты меңгердің"},
+      {name:"Magnet Pro", need: 85, desc:"Жоғары деңгей! Жарайсың!"}
     ];
 
     badges.forEach(b=>{
@@ -267,7 +642,7 @@
       div.innerHTML = `
         <div>
           <b>${unlocked ? "🏅" : "🔒"} ${b.name}</b>
-          <div class="small">${b.desc} (қажет: ${b.need}/60)</div>
+          <div class="small">${b.desc} (қажет: ${b.need}/100)</div>
         </div>
         <div class="tag ${unlocked ? "ok":"bad"}">${unlocked ? "Ашылды":"Жабық"}</div>
       `;
@@ -276,35 +651,33 @@
   }
 
   function saveToStorage(){
-    localStorage.setItem("magnet_platform_state", JSON.stringify({
+    localStorage.setItem("edu_magnet_state", JSON.stringify({
       ...state,
-      traffic: $("traffic").value,
-      ref321: $("ref321").value
+      traffic: $("traffic").value
     }));
   }
 
   function loadFromStorage(){
-    const raw = localStorage.getItem("magnet_platform_state");
+    const raw = localStorage.getItem("edu_magnet_state");
     if(!raw) return;
     try{
       const s = JSON.parse(raw);
       state.testScore = s.testScore ?? 0;
       state.taskScore = s.taskScore ?? 0;
+      state.cwScore = s.cwScore ?? 0;
       state.reflectionsSaved = s.reflectionsSaved ?? 0;
       $("testScore").textContent = state.testScore;
       $("taskScore").textContent = state.taskScore;
+      $("cwScore").textContent = state.cwScore;
       $("traffic").value = s.traffic ?? "";
-      $("ref321").value = s.ref321 ?? "";
-      $("refSaved").textContent = state.reflectionsSaved;
       computeTotal();
       updateTrafficAdvice();
     }catch(e){}
   }
 
-  // ====== 1) ТЕСТ ======
+  // ─── ТЕСТ ─────────────────────────────────────────────────────────────────
   $("btnCheck").addEventListener("click", ()=>{
     let score = 0;
-    // 3 вопроса * 10 баллов = 30
     for(const q of [1,2,3]){
       const chosen = document.querySelector(`input[name="q${q}"]:checked`)?.value;
       if(chosen && chosen === KEY_TEST["q"+q]) score += 10;
@@ -314,34 +687,32 @@
     computeTotal();
   });
 
+  // ─── СБРОС ────────────────────────────────────────────────────────────────
   $("btnReset").addEventListener("click", ()=>{
     document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
     $("fixA").value=""; $("fixB").value=""; $("fixC").value=""; $("fixD").value="";
-    $("ref321").value=""; $("traffic").value="";
-    state.testScore=0; state.taskScore=0; state.reflectionsSaved=0;
-    $("testScore").textContent="0"; $("taskScore").textContent="0"; $("refSaved").textContent="0";
+    $("traffic").value="";
+    state.testScore=0; state.taskScore=0; state.cwScore=0;
+    $("testScore").textContent="0"; $("taskScore").textContent="0"; $("cwScore").textContent="0";
     $("exportText").textContent="";
     $("trafficAdvice").textContent="";
-    localStorage.removeItem("magnet_platform_state");
+    // кроссворд тоже очистим
+    cwReset();
+    localStorage.removeItem("edu_magnet_state");
     computeTotal();
   });
 
-  // ====== 2) “ҚАТЕ ҚАЙДА?” ТАПСЫРМАСЫ ======
+  // ─── “ҚАТЕ ҚАЙДА?” ────────────────────────────────────────────────────────
   $("btnCheckTask").addEventListener("click", ()=>{
     let score = 0;
 
-    // a) текст — должно упомянуть, что при разделении получаются 2 магнита и у каждого есть N и S
     const a = $("fixA").value.toLowerCase();
-    const aOk = a.includes("екеу") || a.includes("екі") || a.includes("әр") || a.includes("жаңа") || a.includes("n") && a.includes("s");
+    const aOk = a.includes("екеу") || a.includes("екі") || a.includes("әр") || a.includes("жаңа") || (a.includes("n") && a.includes("s"));
     if(a.length >= 15 && aOk) score += 10;
 
-    // b) должно быть true
     if($("fixB").value === "true") score += 8;
-
-    // c) должно быть true
     if($("fixC").value === "true") score += 6;
 
-    // d) текст — должно упомянуть, что линии не пересекаются
     const d = $("fixD").value.toLowerCase();
     const dOk = d.includes("қиылысп") || d.includes("пересек") || d.includes("қиылыспайды");
     if(d.length >= 10 && dOk) score += 6;
@@ -352,50 +723,273 @@
     computeTotal();
   });
 
-  // ====== 3) РЕФЛЕКСИЯ ======
-  $("btnSaveRef").addEventListener("click", ()=>{
-    const txt = $("ref321").value.trim();
-    if(txt.length < 10){
-      alert("Рефлексияны кемінде 1-2 сөйлем етіп жаз.");
-      return;
-    }
-    state.reflectionsSaved += 1;
-    $("refSaved").textContent = state.reflectionsSaved;
-    computeTotal();
-  });
-
-  // ====== TRAFFIC LIGHT ======
+  // ─── TRAFFIC LIGHT ────────────────────────────────────────────────────────
   $("traffic").addEventListener("change", updateTrafficAdvice);
 
   function updateTrafficAdvice(){
     const v = $("traffic").value;
     let t = "";
-    if(v === "green") t = "🟢 Керемет! Енді: күш сызықтарының бағытын (N→S) және ‘тығыздық = өріс күшті’ қағидасын 1 мысалмен бекіт.";
-    if(v === "yellow") t = "🟡 Жаттығу: 3 минут — N/S әсерлесуі бойынша 5 тез сұрақ. Сосын бір қате сызбаны түзетіп көр.";
-    if(v === "red") t = "🔴 Қадамдап: 1) анықтамаларды оқы; 2) N→S бағытын жатта; 3) 2 сұрақтан кейін қайта тест тапсырып көр.";
+    if(v === "green") t = "🟢 Керемет! Енді: N→S бағытын және ‘тығыздық = өріс күшті’ қағидасын 1 мысалмен бекіт.";
+    if(v === "yellow") t = "🟡 Жаттығу: 5 тез сұрақ (N/S әсерлесуі). Сосын кроссвордты қайта тексер.";
+    if(v === "red") t = "🔴 Қадамдап: 1) анықтама; 2) N→S бағыты; 3) кроссвордта 2 сөзді түзет.";
     $("trafficAdvice").textContent = t;
     computeTotal();
   }
 
-  // ====== EXPORT ======
+  // ─── EXPORT ───────────────────────────────────────────────────────────────
   $("btnExport").addEventListener("click", ()=>{
-    const total = state.testScore + state.taskScore;
+    const total = state.testScore + state.taskScore + state.cwScore;
     const traffic = $("traffic").value || "таңдалмады";
-    const ref = $("ref321").value.trim() ? $("ref321").value.trim() : "(жоқ)";
     const text =
-`Тақырып: Тұрақты магниттер
-Нәтиже (ҚБ платформа): ${total}/60
+`EduPhysics AI — ҚБ НӘТИЖЕ
+Тақырып: Тұрақты магниттер
+Жалпы: ${total}/100
 - Мини-тест: ${state.testScore}/30
 - “Қате қайда?”: ${state.taskScore}/30
+- Кроссворд: ${state.cwScore}/40
 Traffic light: ${traffic}
-Рефлексия 3-2-1:
-${ref}
-
 Кері байланыс:
 ${$("trafficAdvice").textContent || "—"}`;
+
     $("exportText").textContent = text;
     navigator.clipboard?.writeText(text).catch(()=>{});
   });
+
+  $("btnToReflection").addEventListener("click", ()=>{
+    // Рефлексия бетіне өтпес бұрын ағымдағы баллдарды сақтап кетеміз
+    saveToStorage();
+    window.location.href = "reflection.html";
+  });
+
+/* ============================================================================
+   КРОССВОРД (встроенный) — сен берген логикаға негізделген
+   ============================================================================
+   Ұпайлау: дұрыс әріптер / жалпы әріптер * 40 (дөңгелектеу)
+   ============================================================================ */
+
+  const CW_WORDS = [
+    // ACROSS
+    { id: 1, dir: 'across', row: 0, col: 0, answer: 'МАГНИТ',   clue: 'Темірді тартатын табиғи немесе жасанды зат' },
+    { id: 4, dir: 'across', row: 2, col: 1, answer: 'ПОЛЮС',    clue: 'Магниттің ең күшті бөлігі (Солтүстік және Оңтүстік)' },
+    { id: 6, dir: 'across', row: 4, col: 0, answer: 'ТАРТУ',    clue: 'Қарама-қарсы полюстер арасындағы өзара әсер' },
+    { id: 7, dir: 'across', row: 6, col: 2, answer: 'ӨРІС',     clue: 'Магниттің айналасындағы күш әсер ететін кеңістік' },
+    { id: 9, dir: 'across', row: 8, col: 0, answer: 'КОМПАС',   clue: 'Тұрақты магнит негізіндегі бағдарлау құралы' },
+    { id: 11,dir: 'across', row:10, col: 1, answer: 'ТЕМІР',    clue: 'Магнит тартатын негізгі металл' },
+    // DOWN
+    { id: 2, dir: 'down',   row: 0, col: 3, answer: 'МАГНИТТІК', clue: '...өріс — магнит тудыратын күш кеңістігі' },
+    { id: 3, dir: 'down',   row: 0, col: 5, answer: 'НИКЕЛЬ',   clue: 'Магнит тарта алатын металл, химиялық белгісі Ni' },
+    { id: 5, dir: 'down',   row: 2, col: 7, answer: 'ИТЕРУ',    clue: 'Бірдей полюстер арасындағы өзара әсер' },
+    { id: 8, dir: 'down',   row: 4, col: 9, answer: 'ФЕРРО',    clue: '...магнетизм — темір тәрізді материалдардың қасиеті' },
+    { id: 10,dir: 'down',   row: 6, col: 5, answer: 'БОЛАТ',    clue: 'Тұрақты магнит жасалатын қатты материал' }
+  ];
+
+  const CW_ROWS = 13, CW_COLS = 12;
+  const cwGridArr = Array.from({length: CW_ROWS}, () => Array(CW_COLS).fill(null));
+
+  // place letters
+  CW_WORDS.forEach(w=>{
+    for(let i=0;i<w.answer.length;i++){
+      const r = w.dir==='across' ? w.row : w.row+i;
+      const c = w.dir==='across' ? w.col+i : w.col;
+      cwGridArr[r][c] = { letter: w.answer[i], num: null };
+    }
+  });
+  // place numbers
+  CW_WORDS.forEach(w=>{
+    const r=w.row,c=w.col;
+    if(cwGridArr[r][c]) cwGridArr[r][c].num = w.id;
+  });
+
+  // bounds
+  let minR=CW_ROWS, maxR=0, minC=CW_COLS, maxC=0;
+  for(let r=0;r<CW_ROWS;r++){
+    for(let c=0;c<CW_COLS;c++){
+      if(cwGridArr[r][c]){
+        minR=Math.min(minR,r); maxR=Math.max(maxR,r);
+        minC=Math.min(minC,c); maxC=Math.max(maxC,c);
+      }
+    }
+  }
+
+  const cwEl = $("cwGrid");
+  const visRows = maxR - minR + 1;
+  const visCols = maxC - minC + 1;
+  cwEl.style.gridTemplateColumns = `repeat(${visCols}, auto)`;
+  cwEl.style.gridTemplateRows = `repeat(${visRows}, auto)`;
+
+  const cwInputMap = {}; // "r,c" -> input
+  function cwGetCellEl(r,c){ return document.querySelector(`.cw-cell[data-r="${r}"][data-c="${c}"]`); }
+
+  for(let r=minR;r<=maxR;r++){
+    for(let c=minC;c<=maxC;c++){
+      const cell=document.createElement("div");
+      cell.className="cw-cell";
+      if(cwGridArr[r][c]){
+        cell.classList.add("active");
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+
+        if(cwGridArr[r][c].num){
+          const n=document.createElement("span");
+          n.className="num";
+          n.textContent=cwGridArr[r][c].num;
+          cell.appendChild(n);
+        }
+
+        const inp=document.createElement("input");
+        inp.type="text";
+        inp.maxLength=1;
+        inp.autocomplete="off";
+        inp.spellcheck=false;
+
+        cell.appendChild(inp);
+        cwInputMap[`${r},${c}`]=inp;
+
+        inp.addEventListener("input", ()=>{
+          const val = inp.value.toUpperCase().replace(/[^А-ЯҒҚҢӨҰҮІЁ]/g,"");
+          inp.value = val ? val[val.length-1] : "";
+          if(inp.value) cwMoveNext(r,c);
+        });
+
+        inp.addEventListener("keydown", (e)=>{
+          if(e.key==="Backspace" && !inp.value) cwMovePrev(r,c);
+          if(e.key==="ArrowRight"){e.preventDefault(); cwFocus(r,c+1);}
+          if(e.key==="ArrowLeft"){e.preventDefault(); cwFocus(r,c-1);}
+          if(e.key==="ArrowDown"){e.preventDefault(); cwFocus(r+1,c);}
+          if(e.key==="ArrowUp"){e.preventDefault(); cwFocus(r-1,c);}
+        });
+
+        inp.addEventListener("focus", ()=>{
+          cwClearHL();
+          cell.classList.add("selected");
+          cwHighlightWord(r,c);
+        });
+      }
+      cwEl.appendChild(cell);
+    }
+  }
+
+  function cwFocus(r,c){
+    const inp = cwInputMap[`${r},${c}`];
+    if(inp) inp.focus();
+  }
+  function cwMoveNext(r,c){
+    if(cwInputMap[`${r},${c+1}`]) return cwFocus(r,c+1);
+    if(cwInputMap[`${r+1},${c}`]) return cwFocus(r+1,c);
+  }
+  function cwMovePrev(r,c){
+    if(cwInputMap[`${r},${c-1}`]) return cwFocus(r,c-1);
+    if(cwInputMap[`${r-1},${c}`]) return cwFocus(r-1,c);
+  }
+  function cwClearHL(){
+    document.querySelectorAll(".cw-cell").forEach(x=>x.classList.remove("highlight","selected"));
+  }
+  function cwHighlightWord(r,c){
+    CW_WORDS.forEach(w=>{
+      for(let i=0;i<w.answer.length;i++){
+        const wr = w.dir==='across' ? w.row : w.row+i;
+        const wc = w.dir==='across' ? w.col+i : w.col;
+        if(wr===r && wc===c){
+          for(let j=0;j<w.answer.length;j++){
+            const hr = w.dir==='across' ? w.row : w.row+j;
+            const hc = w.dir==='across' ? w.col+j : w.col;
+            const el = cwGetCellEl(hr,hc);
+            if(el) el.classList.add("highlight");
+          }
+        }
+      }
+    });
+  }
+
+  // clues
+  const across = $("cwAcross");
+  const down = $("cwDown");
+  function addClue(w, container){
+    const div=document.createElement("div");
+    div.className="cw-clue";
+    div.innerHTML = `<span class="n">${w.id}</span><span class="t">${w.clue}</span>`;
+    div.addEventListener("click", ()=>cwFocus(w.row,w.col));
+    container.appendChild(div);
+  }
+  CW_WORDS.filter(w=>w.dir==="across").forEach(w=>addClue(w,across));
+  CW_WORDS.filter(w=>w.dir==="down").forEach(w=>addClue(w,down));
+
+  function cwComputeScore(){
+    // count letters
+    let total=0, correct=0;
+    CW_WORDS.forEach(w=>{
+      for(let i=0;i<w.answer.length;i++){
+        const r = w.dir==='across' ? w.row : w.row+i;
+        const c = w.dir==='across' ? w.col+i : w.col;
+        const inp = cwInputMap[`${r},${c}`];
+        const cell = cwGetCellEl(r,c);
+        if(!inp) continue;
+        total++;
+        if(inp.value.toUpperCase() === w.answer[i]){
+          correct++;
+          cell?.classList.add("correct");
+          cell?.classList.remove("wrong");
+        }else if(inp.value){
+          cell?.classList.add("wrong");
+          cell?.classList.remove("correct");
+        }else{
+          cell?.classList.remove("wrong","correct");
+        }
+      }
+    });
+
+    // scale to /40
+    const score = total ? Math.round((correct/total)*40) : 0;
+    state.cwScore = clamp(score,0,40);
+    $("cwScore").textContent = state.cwScore;
+
+    const msg = $("cwMsg");
+    if(correct===total && total>0){
+      msg.className="cw-result ok";
+      msg.textContent = "✓ Барлығы дұрыс! Керемет!";
+    }else{
+      msg.className="cw-result warn";
+      msg.textContent = `${correct} / ${total} дұрыс • Ұпай: ${state.cwScore}/40`;
+    }
+
+    computeTotal();
+  }
+
+  function cwReveal(){
+    CW_WORDS.forEach(w=>{
+      for(let i=0;i<w.answer.length;i++){
+        const r = w.dir==='across' ? w.row : w.row+i;
+        const c = w.dir==='across' ? w.col+i : w.col;
+        const inp = cwInputMap[`${r},${c}`];
+        const cell = cwGetCellEl(r,c);
+        if(inp){ inp.value = w.answer[i]; }
+        cell?.classList.add("correct");
+        cell?.classList.remove("wrong");
+      }
+    });
+    state.cwScore = 40; // если показали ответы — можно оставить 40 или 0; оставим 40 ТОЛЬКО если учитель разрешает.
+    // Хочешь честнее: поставь 0 вместо 40.
+    $("cwMsg").className="cw-result";
+    $("cwMsg").textContent="Жауаптар көрсетілді";
+    $("cwScore").textContent = state.cwScore;
+    computeTotal();
+  }
+
+  function cwReset(){
+    Object.values(cwInputMap).forEach(inp=>inp.value="");
+    document.querySelectorAll(".cw-cell").forEach(c=>c.classList.remove("correct","wrong","highlight","selected"));
+    $("cwMsg").textContent="";
+    state.cwScore = 0;
+    $("cwScore").textContent="0";
+    computeTotal();
+  }
+
+  $("cwCheck").addEventListener("click", cwComputeScore);
+  $("cwReveal").addEventListener("click", cwReveal);
+  $("cwReset").addEventListener("click", cwReset);
+
+  // expose to outer reset
+  window.cwReset = cwReset;
 
   // INIT
   loadFromStorage();
