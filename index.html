@@ -3,997 +3,1125 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EduPhysics AI • Тұрақты магниттер (ҚБ платформа)</title>
+  <title>EduPhysics AI — Тұрақты магниттер (Тапсырмалар)</title>
+
   <style>
-    /* ─────────────────────────────────────────────────────────────
-       ДИЗАЙН (басқаша): “Neon Paper + Grid”
-       ───────────────────────────────────────────────────────────── */
     :root{
-      --bg:#070a12;
-      --paper:#0c1222;
-      --paper2:#0a1020;
-      --stroke:rgba(255,255,255,.10);
-      --stroke2:rgba(255,255,255,.06);
-      --text:#edf3ff;
-      --muted:#a9b7d6;
+      /* БЕЖЕВЫЙ ТЕМА */
+      --bg: #f5efe6;
+      --bg2:#efe2d0;
+      --card:#fffaf2;
+      --stroke:#e2d4c2;
+      --text:#2b241c;
+      --muted:#6d5b4b;
 
-      --a:#7c3aed; /* violet */
-      --b:#22d3ee; /* cyan */
-      --c:#fb7185; /* rose */
-      --ok:#34d399;
-      --warn:#fbbf24;
-      --bad:#fb7185;
+      --accent:#b08968;   /* кофейный */
+      --accent2:#7f5539;  /* темнее */
+      --ok:#2f7a4f;
+      --warn:#b07d12;
+      --bad:#a13a3a;
 
-      --shadow: 0 18px 60px rgba(0,0,0,.50);
-      --radius: 18px;
+      --shadow: 0 12px 30px rgba(43,36,28,.12);
+      --radius: 16px;
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background:
-        radial-gradient(900px 500px at 15% 10%, rgba(34,211,238,.14), transparent 55%),
-        radial-gradient(900px 550px at 85% 15%, rgba(124,58,237,.16), transparent 55%),
-        radial-gradient(900px 600px at 70% 85%, rgba(251,113,133,.10), transparent 60%),
-        linear-gradient(180deg, #070a12, #050711);
-      overflow-x:hidden;
-    }
-
-    /* subtle grid */
-    body::before{
-      content:"";
-      position:fixed; inset:0;
-      pointer-events:none;
-      background-image:
-        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 42px 42px;
-      opacity:.25;
-      mask-image: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,1) 0%, rgba(0,0,0,.2) 60%, transparent 100%);
+        radial-gradient(900px 520px at 20% 10%, rgba(176,137,104,.18), transparent 60%),
+        radial-gradient(820px 520px at 85% 15%, rgba(127,85,57,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height:100vh;
     }
 
     header{
       position:sticky; top:0; z-index:10;
-      backdrop-filter: blur(12px);
-      background: rgba(7,10,18,.70);
-      border-bottom:1px solid var(--stroke2);
+      background: rgba(245,239,230,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--stroke);
     }
-    .topbar{
-      max-width:1120px;
+
+    .top{
+      max-width:1100px;
       margin:0 auto;
-      padding:16px 16px;
+      padding:14px 16px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:12px;
+      flex-wrap:wrap;
     }
+
     .brand{
-      display:flex; flex-direction:column; gap:2px;
+      display:flex; gap:12px; align-items:center;
     }
-    .brand b{
-      font-size:14px; letter-spacing:.08em; text-transform:uppercase;
-      background: linear-gradient(90deg, var(--b), var(--a));
-      -webkit-background-clip:text; background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
-    .brand span{font-size:12px;color:var(--muted)}
-    .nav{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:9px 12px;
+    .logo{
+      width:42px; height:42px; border-radius:14px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(176,137,104,.95), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(127,85,57,.85), transparent 55%),
+        rgba(255,255,255,.7);
       border:1px solid var(--stroke);
-      border-radius:999px;
-      background: rgba(12,18,34,.55);
-      color:var(--text);
-      text-decoration:none;
-      font-weight:700;
-      font-size:12px;
-      letter-spacing:.04em;
-      transition:.18s;
-    }
-    .chip:hover{transform:translateY(-1px); border-color:rgba(34,211,238,.35)}
-    .chip .dot{
-      width:8px;height:8px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, var(--b), var(--a));
-      box-shadow: 0 0 18px rgba(34,211,238,.35);
-    }
-
-    main{
-      max-width:1120px;
-      margin:0 auto;
-      padding:16px;
-      display:grid;
-      gap:14px;
-    }
-
-    .hero{
-      border-radius: var(--radius);
-      border:1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(12,18,34,.85), rgba(10,16,32,.72));
       box-shadow: var(--shadow);
-      padding:16px;
-      position:relative;
-      overflow:hidden;
     }
-    .hero::after{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(600px 220px at 20% 0%, rgba(34,211,238,.18), transparent 65%),
-                  radial-gradient(700px 260px at 90% 20%, rgba(124,58,237,.16), transparent 70%);
-      pointer-events:none;
-    }
-    .hero h1{
-      margin:0;
-      font-size: clamp(18px, 2.6vw, 28px);
-      letter-spacing:.02em;
-    }
-    .hero p{
-      margin:8px 0 0;
-      color: var(--muted);
-      line-height:1.5;
-      font-size:13px;
-      max-width: 85ch;
-    }
+    h1{margin:0; font-size:16px; letter-spacing:.2px}
+    .sub{margin:2px 0 0; color:var(--muted); font-size:12.5px; line-height:1.35}
 
-    .grid{
-      display:grid; grid-template-columns: 1fr; gap:14px;
-    }
-    @media (min-width:980px){
-      .grid{grid-template-columns: 1.25fr .75fr;}
-    }
-
-    .card{
-      border-radius: var(--radius);
-      border:1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(12,18,34,.92), rgba(10,16,32,.82));
-      box-shadow: var(--shadow);
-      padding:14px;
-    }
-    .card h2{
-      margin:0 0 10px;
-      font-size:14px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      color: rgba(237,243,255,.95);
-    }
-    .muted{color:var(--muted); font-size:13px; line-height:1.55}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    .hr{height:1px;background:var(--stroke2); margin:12px 0}
-
+    .nav{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
     .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:7px 10px;
-      border-radius:999px;
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 12px; border-radius:999px;
+      background: rgba(255,255,255,.7);
       border:1px solid var(--stroke);
-      background: rgba(7,10,18,.35);
-      color: var(--muted);
+      color:var(--muted);
       font-size:12px;
     }
-    .tag{
-      display:inline-flex; align-items:center;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:.04em;
-      border:1px solid var(--stroke);
-      background: rgba(7,10,18,.35);
-    }
-    .tag.ok{color:var(--ok); border-color:rgba(52,211,153,.35)}
-    .tag.warn{color:var(--warn); border-color:rgba(251,191,36,.35)}
-    .tag.bad{color:var(--bad); border-color:rgba(251,113,133,.35)}
-
     .btn{
       cursor:pointer;
       border:1px solid var(--stroke);
-      background: rgba(7,10,18,.35);
-      color: var(--text);
+      background: rgba(255,255,255,.75);
+      color:var(--text);
       padding:10px 12px;
-      border-radius: 14px;
+      border-radius:14px;
       font-weight:800;
-      font-size:12px;
-      letter-spacing:.05em;
-      text-transform:uppercase;
-      transition:.18s;
+      transition: transform .12s, filter .12s;
     }
-    .btn:hover{transform:translateY(-1px); border-color: rgba(34,211,238,.35)}
+    .btn:hover{transform: translateY(-1px); filter: brightness(1.03)}
     .btn.primary{
+      background: linear-gradient(90deg, rgba(176,137,104,.95), rgba(127,85,57,.92));
       border:0;
-      background: linear-gradient(90deg, var(--b), var(--a));
-      color:#031018;
-      box-shadow: 0 12px 30px rgba(34,211,238,.10);
+      color:#fffaf2;
     }
-    .btn.danger{
-      border:0;
-      background: linear-gradient(90deg, var(--c), #f97316);
-      color:#180607;
+    .btn.ghost{
+      background: transparent;
     }
 
-    .q{
+    main{max-width:1100px; margin:0 auto; padding:16px}
+    .grid{display:grid; gap:14px}
+    @media (min-width:980px){
+      .grid{grid-template-columns: 1.25fr .75fr}
+    }
+
+    .card{
+      background: var(--card);
       border:1px solid var(--stroke);
-      background: rgba(7,10,18,.28);
-      border-radius: 16px;
-      padding:12px;
-      margin:10px 0;
+      border-radius: var(--radius);
+      padding:14px;
+      box-shadow: var(--shadow);
     }
-    .q b{color:rgba(237,243,255,.95)}
-    label{
-      display:block;
-      margin:7px 0;
-      font-size:13px;
-      color: rgba(237,243,255,.90);
-    }
-    input[type="text"], textarea, select{
-      width:100%;
-      padding:10px 11px;
+    .card h2{margin:0 0 10px; font-size:15px}
+    .muted{color:var(--muted); font-size:13px; line-height:1.5}
+    .hr{height:1px; background: rgba(226,212,194,.9); margin:12px 0}
+
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .two{display:grid; gap:12px}
+    @media (min-width:760px){ .two{grid-template-columns: 1fr 1fr} }
+
+    .badge{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap:10px;
+      padding:10px 12px;
       border-radius: 14px;
+      border: 1px dashed rgba(127,85,57,.35);
+      background: rgba(255,255,255,.55);
+    }
+
+    .tag{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
       border:1px solid var(--stroke);
-      background: rgba(7,10,18,.30);
-      color: var(--text);
+      white-space:nowrap;
+    }
+    .tag.ok{color:var(--ok); background: rgba(47,122,79,.10); border-color: rgba(47,122,79,.25)}
+    .tag.warn{color:var(--warn); background: rgba(176,125,18,.10); border-color: rgba(176,125,18,.25)}
+    .tag.bad{color:var(--bad); background: rgba(161,58,58,.10); border-color: rgba(161,58,58,.25)}
+
+    label{display:block; margin:6px 0; font-size:13px}
+    input[type="text"], input[type="number"], select, textarea{
+      width:100%;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.75);
+      color:var(--text);
       outline:none;
     }
     textarea{min-height:90px; resize:vertical}
 
-    .scoreBig{font-size:30px;font-weight:900; letter-spacing:.02em}
-    .badge{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px dashed rgba(255,255,255,.18);
-      background: rgba(7,10,18,.25);
-    }
-    .badges{display:grid; gap:10px}
-    .small{font-size:12px;color:var(--muted)}
-    .hint{font-size:12px;color:var(--muted); margin-top:6px}
-
-    /* ─────────────────────────────────────────────────────────────
-       КРОССВОРД (встроенный) — стиль совместимый с темой
-       ───────────────────────────────────────────────────────────── */
-    .cw-wrap{
-      border-radius: var(--radius);
-      border:1px solid var(--stroke);
-      background: rgba(7,10,18,.22);
-      padding:14px;
-    }
-    .cw-head{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
-      flex-wrap:wrap;
-    }
-    .cw-head h3{
-      margin:0;
-      font-size:14px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-    }
-    .cw-grid{
-      display:inline-grid;
-      gap:1px;
-      background: rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: 10px;
-      overflow:hidden;
-      margin-top:12px;
-    }
-    .cw-cell{
-      width:34px; height:34px;
-      background: rgba(7,10,18,.55);
-      position:relative;
-    }
-    .cw-cell.active{background: rgba(12,18,34,.88)}
-    .cw-cell .num{
-      position:absolute; top:2px; left:3px;
-      font-size:9px;
-      color: rgba(34,211,238,.9);
-      font-weight:900;
-      pointer-events:none;
-    }
-    .cw-cell input{
-      width:100%; height:100%;
-      border:0; outline:0;
-      background: transparent;
-      color: var(--text);
-      text-transform:uppercase;
-      text-align:center;
-      font-weight:900;
-      font-size:14px;
-      padding-top:8px;
-      caret-color: var(--b);
-    }
-    .cw-cell.correct input{color: var(--ok)}
-    .cw-cell.wrong input{color: var(--bad)}
-    .cw-cell.highlight{background: rgba(34,211,238,.12)}
-    .cw-cell.selected{background: rgba(124,58,237,.18)}
-
-    .cw-cols{
-      display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;
-    }
-    .cw-col{
-      flex:1 1 280px;
-      border:1px solid var(--stroke2);
-      border-radius: 14px;
-      background: rgba(12,18,34,.55);
+    .q{
       padding:12px;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.65);
+      margin:10px 0;
     }
-    .cw-col h4{
+    .opt{display:flex; gap:8px; align-items:flex-start; margin:8px 0; font-size:13px}
+    .opt input{margin-top:2px}
+
+    .small{font-size:12px; color:var(--muted)}
+    .scoreBig{font-size:30px; font-weight:1000; letter-spacing:.4px}
+
+    .progress{
+      height:10px; border-radius:999px;
+      background: rgba(127,85,57,.10);
+      overflow:hidden;
+      border: 1px solid rgba(127,85,57,.22);
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(176,137,104,.95), rgba(47,122,79,.85));
+      transition: width .25s ease;
+    }
+
+    /* Мини-карточки для 9 вопросов */
+    .miniGrid{
+      display:grid;
+      gap:10px;
+    }
+    @media (min-width:760px){
+      .miniGrid{grid-template-columns: 1fr 1fr}
+    }
+    .miniCard{
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      background: rgba(255,255,255,.72);
+      padding:10px;
+    }
+    .miniTop{
+      display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+    }
+    .miniNum{font-weight:1000; color: var(--accent2)}
+    .miniStatus{font-size:12px; font-weight:900}
+    .miniStatus.ok{color:var(--ok)}
+    .miniStatus.bad{color:var(--bad)}
+
+    /* Кроссворд (встроенный) */
+    .cwWrap{display:grid; gap:12px}
+    @media (min-width:860px){ .cwWrap{grid-template-columns: 1fr 360px;} }
+
+    #crossword-grid{
+      display:inline-grid;
+      border: 1px solid rgba(127,85,57,.28);
+      border-radius: 12px;
+      overflow:hidden;
+      gap: 1px;
+      background: rgba(127,85,57,.22);
+      box-shadow: var(--shadow);
+    }
+    .cell{width:36px;height:36px;background: rgba(255,255,255,.55);position:relative}
+    .cell.active{background: rgba(255,255,255,.85)}
+    .cell .num{position:absolute;top:2px;left:4px;font-size:9px;color:var(--accent2);font-weight:900}
+    .cell input{
+      width:100%;height:100%;
+      background:transparent;border:0;outline:none;
+      text-align:center;
+      font-size:16px;font-weight:1000;
+      color:var(--text); text-transform:uppercase;
+      padding-top:8px;
+    }
+    .cell.correct input{color:var(--ok)}
+    .cell.wrong input{color:var(--bad)}
+    .cell.highlighted{background: rgba(176,137,104,.18)}
+    .cell.selected{background: rgba(127,85,57,.16)}
+
+    .cluesSection{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.65);
+      border-radius:14px;
+      padding:12px;
+      margin-bottom:10px;
+    }
+    .cluesSection h4{
       margin:0 0 10px;
       font-size:12px;
-      letter-spacing:.12em;
+      letter-spacing:.18em;
       text-transform:uppercase;
-      color: rgba(251,191,36,.95);
+      color: var(--accent2);
     }
-    .cw-clue{
+    .clueItem{
       display:flex; gap:8px;
       padding:7px 6px;
-      border-radius: 10px;
-      border:1px solid transparent;
+      border-radius:12px;
       cursor:pointer;
-      transition:.15s;
     }
-    .cw-clue:hover{border-color:rgba(34,211,238,.25); background: rgba(7,10,18,.25)}
-    .cw-clue .n{min-width:22px; color: rgba(34,211,238,.95); font-weight:900}
-    .cw-clue .t{color: rgba(237,243,255,.85); font-size:13px; line-height:1.35}
-
-    .cw-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-    .cw-result{margin-top:10px; font-weight:900; letter-spacing:.02em}
-    .cw-result.ok{color: var(--ok)}
-    .cw-result.warn{color: var(--warn)}
-
-    @media (max-width:640px){
-      .cw-cell{width:28px;height:28px}
-      .cw-cell input{font-size:12px; padding-top:6px}
-      .cw-cell .num{font-size:7px}
-    }
+    .clueItem:hover{background: rgba(176,137,104,.10)}
+    .clueNum{min-width:22px; font-weight:1000; color: var(--accent2)}
+    .clueText{font-size:13px; color: var(--muted); line-height:1.45}
   </style>
 </head>
 
 <body>
 <header>
-  <div class="topbar">
+  <div class="top">
     <div class="brand">
-      <b>EduPhysics AI</b>
-      <span>ҚБ платформасы • 8-сынып • Тұрақты магниттер</span>
+      <div class="logo"></div>
+      <div>
+        <h1>EduPhysics AI • 8-сынып • «Тұрақты магниттер»</h1>
+        <div class="sub">ҚМЖ тапсырмалары + мини сұрақтар + кроссворд + қорытынды баға (10 балл)</div>
+      </div>
     </div>
-    <nav class="nav">
-      <a class="chip" href="#tasks"><span class="dot"></span>Тест + ҚБ</a>
-      <a class="chip" href="#crossword"><span class="dot"></span>Кроссворд</a>
-      <a class="chip" href="reflection.html"><span class="dot"></span>Рефлексия беті →</a>
-    </nav>
+
+    <div class="nav">
+      <span class="pill">Жалпы баға: <b id="total10">0</b>/10</span>
+      <a class="btn ghost" href="reflection.html">2-бет: Рефлексия →</a>
+      <button class="btn primary" id="btnExport">Нәтижені көшіру</button>
+      <button class="btn" id="btnReset">Тазалау</button>
+    </div>
   </div>
 </header>
 
 <main>
-  <section class="hero">
-    <h1>Тұрақты магниттер: авто-бағалау + кері байланыс + геймификация</h1>
-    <p>
-      Бұл платформада сен алдымен <b>мини-тест</b> және <b>“Қате қайда?”</b> тапсырмасын орындайсың.
-      Кейін төменде <b>кроссворд</b> шешесің. Барлығы автомат бағаланып, деңгей/бейдж шығады.
-      Соңында “Рефлексия” бетіне өтіп, ерекше рефлексия толтырасың.
-    </p>
-  </section>
-
-  <div class="grid" id="tasks">
-
+  <div class="grid">
     <!-- LEFT -->
     <section class="card">
-      <h2>1) Мини-тест (автоматты тексеріледі)</h2>
-      <p class="muted">Мақсат: негізгі ұғымдарды жылдам тексеру (8.4.3.1–8.4.3.3).</p>
-
-      <div class="q" data-q="1">
-        <div><b>1.</b> Күш сызықтары сыртқы кеңістікте қай бағытта болады?</div>
-        <label><input type="radio" name="q1" value="a"> S → N</label>
-        <label><input type="radio" name="q1" value="b"> N → S</label>
-        <label><input type="radio" name="q1" value="c"> Жоқ, бағыты болмайды</label>
-        <label><input type="radio" name="q1" value="d"> Кез келген бағытта</label>
-      </div>
-
-      <div class="q" data-q="2">
-        <div><b>2.</b> Ұқсас полюстер қалай әсерлеседі?</div>
-        <label><input type="radio" name="q2" value="a"> Тартылады</label>
-        <label><input type="radio" name="q2" value="b"> Тебіледі</label>
-        <label><input type="radio" name="q2" value="c"> Әсерлеспейді</label>
-        <label><input type="radio" name="q2" value="d"> Тек қыздырса әсерлеседі</label>
-      </div>
-
-      <div class="q" data-q="3">
-        <div><b>3.</b> Күш сызықтарының “тығыз” орналасуы нені білдіреді?</div>
-        <label><input type="radio" name="q3" value="a"> Өріс әлсіз</label>
-        <label><input type="radio" name="q3" value="b"> Өріс күштірек</label>
-        <label><input type="radio" name="q3" value="c"> Магнит жоқ</label>
-        <label><input type="radio" name="q3" value="d"> Бұл тек сурет үшін</label>
-      </div>
-
-      <div class="row">
-        <button class="btn primary" id="btnCheck">Тексеру</button>
-        <button class="btn" id="btnReset">Қайта бастау</button>
-        <span class="pill">Тест ұпайы: <b id="testScore">0</b>/30</span>
-      </div>
-
-      <div class="hr"></div>
-
-      <h2>2) ҚБ тапсырмасы: “Қате қайда?”</h2>
-      <p class="muted">Төмендегі тұжырымдарды бағалап, қате болса — дұрысын жаз.</p>
-
-      <div class="q">
-        <label>а) “Магнитті қақ бөлсе, тек N полюсі бар бөлік шығады.” (дұрысы?)</label>
-        <input type="text" id="fixA" placeholder="Мысалы: әр бөлік жаңа магнит болады, екеуінде де N және S бар" />
-
-        <label class="hint">б) “Сыртқы кеңістікте күш сызықтары N→S.”</label>
-        <select id="fixB">
-          <option value="">Таңда…</option>
-          <option value="true">Дұрыс</option>
-          <option value="false">Қате</option>
-        </select>
-
-        <label class="hint">в) “Ұқсас полюстер тебіледі.”</label>
-        <select id="fixC">
-          <option value="">Таңда…</option>
-          <option value="true">Дұрыс</option>
-          <option value="false">Қате</option>
-        </select>
-
-        <label class="hint">г) “Күш сызықтары қиылыса алады.” (дұрысы?)</label>
-        <input type="text" id="fixD" placeholder="Мысалы: күш сызықтары қиылыспайды" />
-      </div>
-
-      <div class="row">
-        <button class="btn primary" id="btnCheckTask">Тапсырманы бағалау</button>
-        <span class="pill">Тапсырма ұпайы: <b id="taskScore">0</b>/30</span>
-      </div>
-
-      <div class="hr"></div>
-
-      <h2>3) Кроссворд (ҚБ-нің шығармашылық бөлігі)</h2>
-      <p class="muted" id="crossword">
-        Төмендегі кроссворд сөздерін толтыр. “Тексеру” басқанда автомат ұпай шығады.
-        Бұл — сенің стандарттан тыс элементің: цифрлық ойын + авто-бағалау.
+      <h2>Бағалау критерийлері (10 баллдық шкала)</h2>
+      <p class="muted">
+        Бұл платформада тапсырмалар ҚМЖ-ға сай берілген. Әр бөлімнің критерийі, дескрипторы және ұпайы бөлек көрсетілген.
       </p>
 
-      <!-- КРОССВОРД -->
-      <div class="cw-wrap">
-        <div class="cw-head">
+      <div class="two">
+        <div class="badge">
           <div>
-            <h3>Кроссворд: “Тұрақты магниттер”</h3>
-            <div class="small">Кеңес: сөздердің бәрі тақырып терминдері. Ұяшыққа 1 әріп.</div>
+            <b>1) ҚМЖ негізгі тапсырма (компас + полюс + күш сызығы)</b>
+            <div class="small">Критерий: магнит өрісін түсіндіреді және қолданады</div>
           </div>
-          <span class="pill">Кроссворд ұпайы: <b id="cwScore">0</b>/40</span>
+          <div class="tag warn">6 балл</div>
         </div>
 
-        <div id="cwGrid" class="cw-grid" aria-label="Crossword grid"></div>
-
-        <div class="cw-cols">
-          <div class="cw-col">
-            <h4>→ Көлденең</h4>
-            <div id="cwAcross"></div>
+        <div class="badge">
+          <div>
+            <b>2) 9 мини-сұрақ</b>
+            <div class="small">Критерий: негізгі ұғымдарды біледі</div>
           </div>
-          <div class="cw-col">
-            <h4>↓ Тік</h4>
-            <div id="cwDown"></div>
-          </div>
+          <div class="tag warn">2 балл</div>
         </div>
 
-        <div class="cw-actions">
-          <button class="btn primary" id="cwCheck">Тексеру</button>
-          <button class="btn" id="cwReveal">Жауабын көрсет</button>
-          <button class="btn danger" id="cwReset">Тазалау</button>
+        <div class="badge">
+          <div>
+            <b>3) Кроссворд</b>
+            <div class="small">Критерий: терминдерді дұрыс қолданады</div>
+          </div>
+          <div class="tag warn">1 балл</div>
         </div>
-        <div id="cwMsg" class="cw-result"></div>
+
+        <div class="badge">
+          <div>
+            <b>4) Рефлексия (2-бет)</b>
+            <div class="small">Критерий: сабақтан алғанын қорытындылайды</div>
+          </div>
+          <div class="tag warn">1 балл</div>
+        </div>
       </div>
 
+      <div class="hr"></div>
+
+      <!-- 1) QMJ MAIN TASK -->
+      <h2>1) ҚМЖ негізгі тапсырма — 6 балл</h2>
+      <p class="muted">
+        Төмендегі 3 бөлімді орында. Әр бөлім үшін критерий/дескриптор және ұпай бөлек беріледі.
+      </p>
+
+      <div class="q" id="blockCompass">
+        <b>1.1) Бос орынға компасты дұрыс орналастыр (X, Y, Z, T)</b>
+        <p class="small">
+          Бағалау критерийі: магнит өрісінің бағытын анықтайды.<br>
+          Дескриптор: әр нүктеде компас тілшесінің бағытын дұрыс таңдайды.<br>
+          Ұпай: <b>0–3 балл</b>
+        </p>
+
+        <div class="two">
+          <div>
+            <label>X нүктесінде компас тілшесі қай бағытты көрсетеді?</label>
+            <select id="dirX">
+              <option value="">Таңда…</option>
+              <option value="L">← Солға</option>
+              <option value="R">→ Оңға</option>
+              <option value="U">↑ Жоғары</option>
+              <option value="D">↓ Төмен</option>
+            </select>
+          </div>
+          <div>
+            <label>Y нүктесінде компас тілшесі қай бағытты көрсетеді?</label>
+            <select id="dirY">
+              <option value="">Таңда…</option>
+              <option value="L">← Солға</option>
+              <option value="R">→ Оңға</option>
+              <option value="U">↑ Жоғары</option>
+              <option value="D">↓ Төмен</option>
+            </select>
+          </div>
+          <div>
+            <label>Z нүктесінде компас тілшесі қай бағытты көрсетеді?</label>
+            <select id="dirZ">
+              <option value="">Таңда…</option>
+              <option value="L">← Солға</option>
+              <option value="R">→ Оңға</option>
+              <option value="U">↑ Жоғары</option>
+              <option value="D">↓ Төмен</option>
+            </select>
+          </div>
+          <div>
+            <label>T нүктесінде компас тілшесі қай бағытты көрсетеді?</label>
+            <select id="dirT">
+              <option value="">Таңда…</option>
+              <option value="L">← Солға</option>
+              <option value="R">→ Оңға</option>
+              <option value="U">↑ Жоғары</option>
+              <option value="D">↓ Төмен</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="btnCheckCompass">Тексеру</button>
+          <span class="pill">Ұпай: <b id="scoreCompass">0</b>/3</span>
+          <span class="small" id="msgCompass"></span>
+        </div>
+        <p class="small">
+          Ескерту: сыртқы кеңістікте магнит өрісі бағыты <b>N → S</b>. Компас тілшесі өріс бағытымен бағыттас.
+        </p>
+      </div>
+
+      <div class="q" id="blockPoles">
+        <b>1.2) Магниттің полюстерін анықта</b>
+        <p class="small">
+          Бағалау критерийі: N және S полюстерін дұрыс ажыратады.<br>
+          Дескриптор: сол және оң жақ полюсті дұрыс таңдайды.<br>
+          Ұпай: <b>0–2 балл</b>
+        </p>
+
+        <div class="two">
+          <div>
+            <label>Суреттегі магниттің сол жағындағы полюс:</label>
+            <select id="poleLeft">
+              <option value="">Таңда…</option>
+              <option value="N">N (солтүстік)</option>
+              <option value="S">S (оңтүстік)</option>
+            </select>
+          </div>
+          <div>
+            <label>Суреттегі магниттің оң жағындағы полюс:</label>
+            <select id="poleRight">
+              <option value="">Таңда…</option>
+              <option value="N">N (солтүстік)</option>
+              <option value="S">S (оңтүстік)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="btnCheckPoles">Тексеру</button>
+          <span class="pill">Ұпай: <b id="scorePoles">0</b>/2</span>
+          <span class="small" id="msgPoles"></span>
+        </div>
+      </div>
+
+      <div class="q" id="blockLines">
+        <b>1.3) Қай суретте күш сызықтары дұрыс бейнеленген?</b>
+        <p class="small">
+          Бағалау критерийі: күш сызықтарының қасиеттерін біледі.<br>
+          Дескриптор: дұрыс суретті таңдайды.<br>
+          Ұпай: <b>0–1 балл</b>
+        </p>
+
+        <label class="opt"><input type="radio" name="lines" value="a"> а) </label>
+        <label class="opt"><input type="radio" name="lines" value="b"> б) </label>
+        <label class="opt"><input type="radio" name="lines" value="v"> в) </label>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="btnCheckLines">Тексеру</button>
+          <span class="pill">Ұпай: <b id="scoreLines">0</b>/1</span>
+          <span class="small" id="msgLines"></span>
+        </div>
+
+        <p class="small">Дұрыс жауап: <b>б</b> (сен айтып бердің).</p>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- 2) MINI QUESTIONS -->
+      <h2>2) Мини-сұрақтар (9 дана) — 2 балл</h2>
+      <p class="muted">
+        Әр сұраққа жауап жаз. Соңында дұрыс санына қарай 0–2 балл қойылады.<br>
+        <span class="small">0–4 дұрыс → 0 б • 5–6 дұрыс → 1 б • 7–9 дұрыс → 2 б</span>
+      </p>
+
+      <div class="miniGrid" id="miniGrid"></div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btn primary" id="btnCheckMini">Барлығын тексеру</button>
+        <span class="pill">Дұрыс: <b id="miniCorrect">0</b>/9</span>
+        <span class="pill">Ұпай: <b id="scoreMini">0</b>/2</span>
+        <span class="small" id="msgMini"></span>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- 3) CROSSWORD -->
+      <h2>3) Кроссворд — 1 балл</h2>
+      <p class="muted">
+        Терминдерді бекіту. Кроссворд <b>≥80%</b> дұрыс болса — 1 балл.
+      </p>
+
+      <div class="cwWrap">
+        <div>
+          <div id="crossword-grid"></div>
+
+          <div class="row" style="margin-top:10px;">
+            <button class="btn primary" onclick="checkCrossword()">Кроссвордты тексеру</button>
+            <button class="btn" onclick="resetCrossword()">Тазалау</button>
+            <span class="pill">Кроссворд ұпайы: <b id="scoreCrossword">0</b>/1</span>
+            <span class="small" id="msgCrossword"></span>
+          </div>
+        </div>
+
+        <div>
+          <div class="cluesSection">
+            <h4>→ Көлденең</h4>
+            <div id="across-clues"></div>
+          </div>
+          <div class="cluesSection">
+            <h4>↓ Тік</h4>
+            <div id="down-clues"></div>
+          </div>
+
+          <div class="cluesSection">
+            <h4>Критерий / Дескриптор</h4>
+            <div class="small">
+              Критерий: магнитке қатысты терминдерді қолданады.<br>
+              Дескриптор: сөздерді дұрыс толтырады (≥80%).<br>
+              Ұпай: <b>0–1</b>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>Қорытынды</h2>
+      <p class="muted">
+        Жалпы баға автомат есептеледі. Рефлексия ұпайы <b>2-бетте</b> қосылады.
+      </p>
+
+      <div class="row">
+        <span class="pill">ҚМЖ тапсырма: <b id="sumMain">0</b>/6</span>
+        <span class="pill">Мини-сұрақтар: <b id="sumMini">0</b>/2</span>
+        <span class="pill">Кроссворд: <b id="sumCw">0</b>/1</span>
+        <span class="pill">Рефлексия: <b id="sumRef">0</b>/1</span>
+      </div>
+
+      <div class="progress" style="margin-top:10px;">
+        <div class="bar" id="bar"></div>
+      </div>
+
+      <p class="small" style="margin-top:8px;" id="levelText">Деңгей: —</p>
+
+      <div class="q" style="margin-top:10px;">
+        <b>Мәтін түрінде шығару</b>
+        <p class="small">Төмендегі батырма нәтижені көшіреді (копировать). Мұғалімге жіберуге ыңғайлы.</p>
+        <button class="btn primary" id="btnMakeText">Нәтижені мәтін қылу</button>
+        <pre id="exportBox" style="white-space:pre-wrap;background:rgba(255,255,255,.7);border:1px solid var(--stroke);border-radius:14px;padding:10px;margin-top:10px;min-height:60px;"></pre>
+      </div>
     </section>
 
     <!-- RIGHT -->
     <aside class="card">
-      <h2>Нәтиже + кері байланыс</h2>
-
-      <div class="row" style="justify-content:space-between;align-items:baseline">
+      <h2>Нәтиже панелі</h2>
+      <div class="row" style="justify-content:space-between; align-items:baseline;">
         <div>
-          <div class="muted">Жалпы ұпай (осы бет)</div>
-          <div class="scoreBig" id="totalScore">0</div>
-          <div class="muted">/ 100 (тест 30 + қате 30 + кроссворд 40)</div>
+          <div class="small">Жалпы баға</div>
+          <div class="scoreBig"><span id="total10Big">0</span><span class="small">/10</span></div>
         </div>
-        <div id="levelTag" class="tag bad">Бастау</div>
+        <div id="tagLevel" class="tag bad">Бастау</div>
       </div>
 
       <div class="hr"></div>
 
-      <h2>Traffic light (өзін-өзі бағалау)</h2>
-      <p class="muted">Оқушы өзі таңдайды — ал платформа нақты кеңес береді.</p>
-      <select id="traffic">
-        <option value="">Таңда…</option>
-        <option value="green">🟢 Түсіндім</option>
-        <option value="yellow">🟡 Жаттығу керек</option>
-        <option value="red">🔴 Қиналдым</option>
-      </select>
-      <p class="muted" id="trafficAdvice" style="margin-top:10px;"></p>
-
-      <div class="hr"></div>
-
-      <h2>Рубрика бойынша қысқа фидбек (автоматты)</h2>
-      <div class="badges" id="rubricBox"></div>
-
-      <div class="hr"></div>
-
-      <h2>Геймификация: бейдждер</h2>
-      <p class="muted">Ұпайға қарай бейдж ашылады.</p>
-      <div class="badges" id="badgeBox"></div>
-
-      <div class="hr"></div>
-
-      <div class="row">
-        <button class="btn" id="btnToReflection">Рефлексия бетіне өту →</button>
-        <button class="btn primary" id="btnExport">Нәтижені көшіру</button>
+      <h2>Кері байланыс (автоматты)</h2>
+      <div class="badge">
+        <div>
+          <b id="fbTitle">—</b>
+          <div class="small" id="fbText">Нәтиже шыққан соң кеңес көрсетіледі.</div>
+        </div>
+        <div class="tag warn">feedback</div>
       </div>
-      <p class="small" id="exportText" style="white-space:pre-wrap;margin-top:10px;"></p>
 
       <div class="hr"></div>
-      <p class="small">Ескерту: бәрі браузерде сақталады (localStorage). Интернетсіз де жұмыс істейді.</p>
+
+      <h2>Рефлексия ұпайы</h2>
+      <p class="muted">
+        Рефлексия <b>2-бетте</b> толтырылады. Сол жақтағы жалпыға автомат қосылады.
+      </p>
+      <a class="btn primary" href="reflection.html" style="display:inline-block;">Рефлексия бетіне өту</a>
+
+      <div class="hr"></div>
+
+      <h2>Ескерту</h2>
+      <p class="small">
+        Барлық нәтиже браузерде сақталады (localStorage). Бір компьютерде қайта ашсаң — бәрі тұрады.
+      </p>
     </aside>
-
   </div>
 </main>
 
 <script>
-/* ============================================================================
-   1-БЕТ ЛОГИКА: Тест + ҚБ + Кроссворд + Фидбек
-   ============================================================================ */
+/* ==========================
+   НАСТРОЙКИ / ХРАНЕНИЕ
+   ========================== */
+// Русский: ключи localStorage
+const STORAGE_KEY = "edu_magnets_v3_state";
 
-  // ─── ТЕСТ КЛЮЧИ ────────────────────────────────────────────────────────────
-  const KEY_TEST = { q1:"b", q2:"b", q3:"b" };
+/* ==========================
+   ОБЩИЕ ВСПОМОГАТЕЛЬНЫЕ
+   ========================== */
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 
-  // ─── STATE ────────────────────────────────────────────────────────────────
-  const state = {
-    testScore: 0,   // /30
-    taskScore: 0,   // /30
-    cwScore: 0,     // /40
-    reflectionsSaved: 0
-  };
+const state = {
+  // 1) QMJ main
+  compass: 0,  // /3
+  poles: 0,    // /2
+  lines: 0,    // /1
+  // 2) mini
+  miniCorrect: 0, // /9
+  miniScore: 0,   // /2
+  // 3) crossword
+  crosswordScore: 0, // /1
+  crosswordPercent: 0,
+  // 4) reflection score will be loaded from storage too
+  reflection: 0, // /1
+};
 
-  const $ = (id) => document.getElementById(id);
-  const clamp = (x,min,max)=>Math.max(min,Math.min(max,x));
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
 
-  function computeTotal(){
-    const total = state.testScore + state.taskScore + state.cwScore; // /100
-    $("totalScore").textContent = total;
-    $("cwScore").textContent = state.cwScore;
-    updateLevel(total);
-    updateRubric(total);
-    updateBadges(total);
-    saveToStorage();
+function loadState(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return;
+  try{
+    const s = JSON.parse(raw);
+    Object.assign(state, s);
+  }catch(e){}
+}
+
+function updateTotals(){
+  const main = state.compass + state.poles + state.lines; // /6
+  const total = main + state.miniScore + state.crosswordScore + state.reflection; // /10
+
+  $("sumMain").textContent = main.toFixed(0);
+  $("sumMini").textContent = state.miniScore.toFixed(0);
+  $("sumCw").textContent = state.crosswordScore.toFixed(0);
+  $("sumRef").textContent = state.reflection.toFixed(0);
+
+  $("total10").textContent = total.toFixed(0);
+  $("total10Big").textContent = total.toFixed(0);
+
+  const pct = clamp((total/10)*100, 0, 100);
+  $("bar").style.width = pct.toFixed(0) + "%";
+
+  // Уровень
+  let tag = $("tagLevel");
+  let levelText = $("levelText");
+  if(total >= 9){
+    tag.className = "tag ok"; tag.textContent = "Өте жақсы";
+    levelText.textContent = "Деңгей: Өте жақсы (9–10)";
+    setFeedback("Керемет!", "Сен магнит өрісін жақсы түсінесің. Енді мысал келтіруді (компас, магниттік құлып, динамик) бекіт.");
+  }else if(total >= 7){
+    tag.className = "tag warn"; tag.textContent = "Жақсы";
+    levelText.textContent = "Деңгей: Жақсы (7–8)";
+    setFeedback("Жақсы бағыт!", "Күш сызықтарының бағыты (N→S) және полюстер әсерлесуін қайта қарап, бір-екі жаттығу жаса.");
+  }else{
+    tag.className = "tag bad"; tag.textContent = "Бастапқы";
+    levelText.textContent = "Деңгей: Бастапқы (0–6)";
+    setFeedback("Қайта қарап алайық", "Алдымен: 1) N және S, 2) сыртта N→S, 3) аттас тебіледі/әр аттас тартылады. Сосын қайта орында.");
   }
 
-  function updateLevel(total){
-    const tag = $("levelTag");
-    if(total >= 85){ tag.className="tag ok"; tag.textContent="Жоғары деңгей"; }
-    else if(total >= 60){ tag.className="tag warn"; tag.textContent="Орта деңгей"; }
-    else { tag.className="tag bad"; tag.textContent="Бастапқы деңгей"; }
-  }
+  saveState();
+}
 
-  function makeBadge(text){
+function setFeedback(title, text){
+  $("fbTitle").textContent = title;
+  $("fbText").textContent = text;
+}
+
+/* ==========================
+   1) QMJ MAIN: COMPASS
+   ========================== */
+// Русский: ключ ответов по компасу.
+// Принцип: внешнее поле N→S.
+// Для типовой схемы: X (слева от N) ←, Y (сверху) →, Z (снизу) →, T (справа от S) ←
+const KEY_COMPASS = { X:"L", Y:"R", Z:"R", T:"L" };
+
+$("btnCheckCompass").addEventListener("click", ()=>{
+  const x = $("dirX").value;
+  const y = $("dirY").value;
+  const z = $("dirZ").value;
+  const t = $("dirT").value;
+
+  let correct = 0;
+  if(x && x === KEY_COMPASS.X) correct++;
+  if(y && y === KEY_COMPASS.Y) correct++;
+  if(z && z === KEY_COMPASS.Z) correct++;
+  if(t && t === KEY_COMPASS.T) correct++;
+
+  // 4 правильных => 3 балла (0.75 за каждый)
+  const score = clamp(Math.round(correct * 0.75 * 10)/10, 0, 3); // аккуратно
+  state.compass = score;
+
+  $("scoreCompass").textContent = score.toFixed(0);
+  $("msgCompass").textContent = `Дұрыс: ${correct}/4`;
+
+  updateTotals();
+});
+
+/* ==========================
+   1) QMJ MAIN: POLES
+   ========================== */
+$("btnCheckPoles").addEventListener("click", ()=>{
+  const left = $("poleLeft").value;
+  const right = $("poleRight").value;
+
+  // Для схемы из ҚМЖ: слева N, справа S
+  let score = 0;
+  if(left === "N") score += 1;
+  if(right === "S") score += 1;
+
+  state.poles = score;
+  $("scorePoles").textContent = score.toFixed(0);
+  $("msgPoles").textContent = score === 2 ? "✓ Дұрыс!" : "Қайта қарап көр: сол жақ N, оң жақ S";
+
+  updateTotals();
+});
+
+/* ==========================
+   1) QMJ MAIN: LINES (correct = б)
+   ========================== */
+$("btnCheckLines").addEventListener("click", ()=>{
+  const chosen = document.querySelector('input[name="lines"]:checked')?.value || "";
+  const score = chosen === "b" ? 1 : 0;
+  state.lines = score;
+
+  $("scoreLines").textContent = score.toFixed(0);
+  $("msgLines").textContent = score ? "✓ Дұрыс (б)" : "Қате. Дұрысы — б";
+
+  updateTotals();
+});
+
+/* ==========================
+   2) MINI QUESTIONS (9)
+   ========================== */
+// Русский: вопросы и ключи ответов
+const MINI = [
+  { id:1, q:"Магнит өрісінің күш сызықтары …", keys:["тұйық","тұйықталған"] },
+  { id:2, q:"Солтүстік полюстің шартты белгісі?", keys:["n"] },
+  { id:3, q:"Аттас полюстер …, әр аттас полюстер …", keys:["аттас тебіледі әр аттас тартылады","тебіледі тартылады","итерледі тартылады","итерледі тартылады"] },
+  { id:4, q:"Магниттің неше полюсі бар?", keys:["екі","2"] },
+  { id:5, q:"Ата-бабаларымыз алыс сапарда айдалада қалай жол тапқан?", keys:["компас"] },
+  { id:6, q:"Жердің географиялық және магниттік полюстері …", keys:["қарама-қарсы","қарама қарсы"] },
+  { id:7, q:"Оңтүстік полюстің шартты белгісі?", keys:["s"] },
+  { id:8, q:"Ең көп магниттік тартылу күші болатын жер?", keys:["полюс","полюстер","ұштары","магнит ұшы"] },
+  { id:9, q:"Магнит сызықтары қалай бағытталған (сыртқы кеңістікте)?", keys:["n-s","n→s","n to s","n-нен s-ке","nнен sке","nнен s-ке","n -> s"] }
+];
+
+function normAns(s){
+  return (s||"")
+    .toLowerCase()
+    .trim()
+    .replaceAll("—","-")
+    .replaceAll("→","->")
+    .replace(/\s+/g," ");
+}
+
+function buildMiniUI(){
+  const wrap = $("miniGrid");
+  wrap.innerHTML = "";
+  MINI.forEach(item=>{
     const div = document.createElement("div");
-    div.className = "badge";
-    div.innerHTML = `<div>${text}</div><div class="small">фидбек</div>`;
-    return div;
-  }
+    div.className = "miniCard";
+    div.innerHTML = `
+      <div class="miniTop">
+        <div><span class="miniNum">${item.id}.</span> ${item.q}</div>
+        <div class="miniStatus" id="miniStatus${item.id}">—</div>
+      </div>
+      <div style="margin-top:8px;">
+        <input type="text" id="miniInp${item.id}" placeholder="Жауабыңды жаз..." />
+      </div>
+      <div class="small" style="margin-top:6px;">
+        Критерий: негізгі ұғымды қолданады. Дескриптор: дұрыс жауап береді.
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+}
 
-  function updateRubric(total){
-    const box = $("rubricBox");
-    box.innerHTML = "";
+$("btnCheckMini").addEventListener("click", ()=>{
+  let correct = 0;
 
-    // К1 — ұғымдар (тест)
-    const k1 = state.testScore >= 20 ? "✅" : (state.testScore >= 12 ? "⚠️" : "❗");
-    const msg1 = state.testScore >= 20
-      ? "К1: Ұғымдарды жақсы меңгерген."
-      : state.testScore >= 12
-        ? "К1: Ұғымдарда аздап шатасу бар — анықтамаларды қайтала."
-        : "К1: Негізгі ұғымдарды қайта қара (магнит өрісі, полюс, күш сызықтары).";
+  MINI.forEach(item=>{
+    const inp = $(`miniInp${item.id}`).value;
+    const a = normAns(inp);
 
-    // К2–К3 — қасиет/сызық (қате түзету)
-    const k23 = state.taskScore >= 22 ? "✅" : (state.taskScore >= 14 ? "⚠️" : "❗");
-    const msg2 = state.taskScore >= 22
-      ? "К2–К3: Қасиеттер мен күш сызықтарын дұрыс түсіндіреді."
-      : state.taskScore >= 14
-        ? "К2–К3: Бағыт/қасиет бойынша 1–2 қате бар — N→S бағытын есте сақта."
-        : "К2–К3: Полюстер әсерлесуі және күш сызықтарының қиылыспайтынын қайталау керек.";
-
-    // Кроссворд — терминдер бекіту
-    const kc = state.cwScore >= 32 ? "✅" : (state.cwScore >= 22 ? "⚠️" : "❗");
-    const msgC = state.cwScore >= 32
-      ? "Терминдер: Кроссвордта көп сөз дұрыс — өте жақсы бекіттің."
-      : state.cwScore >= 22
-        ? "Терминдер: Бірнеше сөзде қате бар — анықтамаларды қарап қайтала."
-        : "Терминдер: Кроссворд қиын болды — сөздікпен бірге қайта орында.";
-
-    // К4 — дәлелдеу: traffic + кейінгі рефлексияға дайындық
-    const traffic = $("traffic").value;
-    let k4icon = traffic ? "✅" : "⚠️";
-    let k4msg = traffic
-      ? "К4: Өзін-өзі бағалау таңдадың. Енді рефлексия бетіне өтіп ойыңды жинақта."
-      : "К4: Traffic light таңда — платформа нақты кеңес береді.";
-
-    box.appendChild(makeBadge(`${k1} ${msg1}`));
-    box.appendChild(makeBadge(`${k23} ${msg2}`));
-    box.appendChild(makeBadge(`${kc} ${msgC}`));
-    box.appendChild(makeBadge(`${k4icon} ${k4msg}`));
-  }
-
-  function updateBadges(total){
-    const box = $("badgeBox");
-    box.innerHTML = "";
-
-    const badges = [
-      {name:"Field Starter", need: 30, desc:"Негізгі ұғымдарды жинадың"},
-      {name:"Pole Master", need: 55, desc:"Полюстер/қасиеттерді жақсы білесің"},
-      {name:"Line Navigator", need: 70, desc:"Күш сызықтары мен бағытты меңгердің"},
-      {name:"Magnet Pro", need: 85, desc:"Жоғары деңгей! Жарайсың!"}
-    ];
-
-    badges.forEach(b=>{
-      const unlocked = total >= b.need;
-      const div = document.createElement("div");
-      div.className="badge";
-      div.innerHTML = `
-        <div>
-          <b>${unlocked ? "🏅" : "🔒"} ${b.name}</b>
-          <div class="small">${b.desc} (қажет: ${b.need}/100)</div>
-        </div>
-        <div class="tag ${unlocked ? "ok":"bad"}">${unlocked ? "Ашылды":"Жабық"}</div>
-      `;
-      box.appendChild(div);
-    });
-  }
-
-  function saveToStorage(){
-    localStorage.setItem("edu_magnet_state", JSON.stringify({
-      ...state,
-      traffic: $("traffic").value
-    }));
-  }
-
-  function loadFromStorage(){
-    const raw = localStorage.getItem("edu_magnet_state");
-    if(!raw) return;
-    try{
-      const s = JSON.parse(raw);
-      state.testScore = s.testScore ?? 0;
-      state.taskScore = s.taskScore ?? 0;
-      state.cwScore = s.cwScore ?? 0;
-      state.reflectionsSaved = s.reflectionsSaved ?? 0;
-      $("testScore").textContent = state.testScore;
-      $("taskScore").textContent = state.taskScore;
-      $("cwScore").textContent = state.cwScore;
-      $("traffic").value = s.traffic ?? "";
-      computeTotal();
-      updateTrafficAdvice();
-    }catch(e){}
-  }
-
-  // ─── ТЕСТ ─────────────────────────────────────────────────────────────────
-  $("btnCheck").addEventListener("click", ()=>{
-    let score = 0;
-    for(const q of [1,2,3]){
-      const chosen = document.querySelector(`input[name="q${q}"]:checked`)?.value;
-      if(chosen && chosen === KEY_TEST["q"+q]) score += 10;
+    // спец. обработка для вопроса 3: допускаем 2 слова в любом порядке
+    let ok = false;
+    if(item.id === 3){
+      const hasTeb = a.includes("теб");
+      const hasTar = a.includes("тарт");
+      ok = hasTeb && hasTar; // главное смысл
+    }else{
+      ok = item.keys.some(k => a === normAns(k) || a.includes(normAns(k)));
     }
-    state.testScore = score;
-    $("testScore").textContent = score;
-    computeTotal();
+
+    const st = $(`miniStatus${item.id}`);
+    if(ok){
+      correct++;
+      st.textContent = "✓";
+      st.className = "miniStatus ok";
+    }else{
+      st.textContent = "✗";
+      st.className = "miniStatus bad";
+    }
   });
 
-  // ─── СБРОС ────────────────────────────────────────────────────────────────
-  $("btnReset").addEventListener("click", ()=>{
-    document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
-    $("fixA").value=""; $("fixB").value=""; $("fixC").value=""; $("fixD").value="";
-    $("traffic").value="";
-    state.testScore=0; state.taskScore=0; state.cwScore=0;
-    $("testScore").textContent="0"; $("taskScore").textContent="0"; $("cwScore").textContent="0";
-    $("exportText").textContent="";
-    $("trafficAdvice").textContent="";
-    // кроссворд тоже очистим
-    cwReset();
-    localStorage.removeItem("edu_magnet_state");
-    computeTotal();
-  });
+  state.miniCorrect = correct;
+  $("miniCorrect").textContent = correct.toFixed(0);
 
-  // ─── “ҚАТЕ ҚАЙДА?” ────────────────────────────────────────────────────────
-  $("btnCheckTask").addEventListener("click", ()=>{
-    let score = 0;
+  // 0–4 =>0; 5–6 =>1; 7–9 =>2
+  let score = 0;
+  if(correct >= 7) score = 2;
+  else if(correct >= 5) score = 1;
 
-    const a = $("fixA").value.toLowerCase();
-    const aOk = a.includes("екеу") || a.includes("екі") || a.includes("әр") || a.includes("жаңа") || (a.includes("n") && a.includes("s"));
-    if(a.length >= 15 && aOk) score += 10;
+  state.miniScore = score;
+  $("scoreMini").textContent = score.toFixed(0);
 
-    if($("fixB").value === "true") score += 8;
-    if($("fixC").value === "true") score += 6;
+  $("msgMini").textContent = score === 2
+    ? "Керемет! Ұғымдар жақсы."
+    : score === 1
+      ? "Жақсы. 1-2 сұрақты қайта қарап көр."
+      : "Әлі де қайталау керек (N/S, N→S, тебілу/тартылу).";
 
-    const d = $("fixD").value.toLowerCase();
-    const dOk = d.includes("қиылысп") || d.includes("пересек") || d.includes("қиылыспайды");
-    if(d.length >= 10 && dOk) score += 6;
+  updateTotals();
+});
 
-    score = clamp(score,0,30);
-    state.taskScore = score;
-    $("taskScore").textContent = score;
-    computeTotal();
-  });
+/* ==========================
+   3) CROSSWORD (your base, adapted)
+   ========================== */
+// Русский: список слов (как у тебя было)
+const WORDS = [
+  // ACROSS
+  { id: 1, dir:'across', row:0,  col:0, answer:'МАГНИТ',   clue:'Темірді тартатын табиғи немесе жасанды зат' },
+  { id: 4, dir:'across', row:2,  col:1, answer:'ПОЛЮС',    clue:'Магниттің ең күшті бөлігі (Солтүстік және Оңтүстік)' },
+  { id: 6, dir:'across', row:4,  col:0, answer:'ТАРТУ',    clue:'Қарама-қарсы полюстер арасындағы өзара әсер' },
+  { id: 7, dir:'across', row:6,  col:2, answer:'ӨРІС',     clue:'Магниттің айналасындағы күш әсер ететін кеңістік' },
+  { id: 9, dir:'across', row:8,  col:0, answer:'КОМПАС',   clue:'Тұрақты магнит негізіндегі бағдарлау құралы' },
+  { id: 11,dir:'across', row:10, col:1, answer:'ТЕМІР',    clue:'Магнит тартатын негізгі металл' },
+  // DOWN
+  { id: 2, dir:'down', row:0, col:3, answer:'МАГНИТТІК', clue:'...өріс — магнит тудыратын күш кеңістігі' },
+  { id: 3, dir:'down', row:0, col:5, answer:'НИКЕЛЬ',   clue:'Магнит тарта алатын металл, химиялық белгісі Ni' },
+  { id: 5, dir:'down', row:2, col:7, answer:'ИТЕРУ',    clue:'Бірдей полюстер арасындағы өзара әсер' },
+  { id: 8, dir:'down', row:4, col:9, answer:'ФЕРРО',    clue:'...магнетизм — темір тәрізді материалдардың қасиеті' },
+  { id: 10,dir:'down', row:6, col:5, answer:'БОЛАТ',    clue:'Тұрақты магнит жасалатын қатты материал' },
+];
 
-  // ─── TRAFFIC LIGHT ────────────────────────────────────────────────────────
-  $("traffic").addEventListener("change", updateTrafficAdvice);
+const ROWS = 13, COLS = 12;
+let grid = Array.from({length: ROWS}, () => Array(COLS).fill(null));
+let inputMap = {};
 
-  function updateTrafficAdvice(){
-    const v = $("traffic").value;
-    let t = "";
-    if(v === "green") t = "🟢 Керемет! Енді: N→S бағытын және ‘тығыздық = өріс күшті’ қағидасын 1 мысалмен бекіт.";
-    if(v === "yellow") t = "🟡 Жаттығу: 5 тез сұрақ (N/S әсерлесуі). Сосын кроссвордты қайта тексер.";
-    if(v === "red") t = "🔴 Қадамдап: 1) анықтама; 2) N→S бағыты; 3) кроссвордта 2 сөзді түзет.";
-    $("trafficAdvice").textContent = t;
-    computeTotal();
-  }
-
-  // ─── EXPORT ───────────────────────────────────────────────────────────────
-  $("btnExport").addEventListener("click", ()=>{
-    const total = state.testScore + state.taskScore + state.cwScore;
-    const traffic = $("traffic").value || "таңдалмады";
-    const text =
-`EduPhysics AI — ҚБ НӘТИЖЕ
-Тақырып: Тұрақты магниттер
-Жалпы: ${total}/100
-- Мини-тест: ${state.testScore}/30
-- “Қате қайда?”: ${state.taskScore}/30
-- Кроссворд: ${state.cwScore}/40
-Traffic light: ${traffic}
-Кері байланыс:
-${$("trafficAdvice").textContent || "—"}`;
-
-    $("exportText").textContent = text;
-    navigator.clipboard?.writeText(text).catch(()=>{});
-  });
-
-  $("btnToReflection").addEventListener("click", ()=>{
-    // Рефлексия бетіне өтпес бұрын ағымдағы баллдарды сақтап кетеміз
-    saveToStorage();
-    window.location.href = "reflection.html";
-  });
-
-/* ============================================================================
-   КРОССВОРД (встроенный) — сен берген логикаға негізделген
-   ============================================================================
-   Ұпайлау: дұрыс әріптер / жалпы әріптер * 40 (дөңгелектеу)
-   ============================================================================ */
-
-  const CW_WORDS = [
-    // ACROSS
-    { id: 1, dir: 'across', row: 0, col: 0, answer: 'МАГНИТ',   clue: 'Темірді тартатын табиғи немесе жасанды зат' },
-    { id: 4, dir: 'across', row: 2, col: 1, answer: 'ПОЛЮС',    clue: 'Магниттің ең күшті бөлігі (Солтүстік және Оңтүстік)' },
-    { id: 6, dir: 'across', row: 4, col: 0, answer: 'ТАРТУ',    clue: 'Қарама-қарсы полюстер арасындағы өзара әсер' },
-    { id: 7, dir: 'across', row: 6, col: 2, answer: 'ӨРІС',     clue: 'Магниттің айналасындағы күш әсер ететін кеңістік' },
-    { id: 9, dir: 'across', row: 8, col: 0, answer: 'КОМПАС',   clue: 'Тұрақты магнит негізіндегі бағдарлау құралы' },
-    { id: 11,dir: 'across', row:10, col: 1, answer: 'ТЕМІР',    clue: 'Магнит тартатын негізгі металл' },
-    // DOWN
-    { id: 2, dir: 'down',   row: 0, col: 3, answer: 'МАГНИТТІК', clue: '...өріс — магнит тудыратын күш кеңістігі' },
-    { id: 3, dir: 'down',   row: 0, col: 5, answer: 'НИКЕЛЬ',   clue: 'Магнит тарта алатын металл, химиялық белгісі Ni' },
-    { id: 5, dir: 'down',   row: 2, col: 7, answer: 'ИТЕРУ',    clue: 'Бірдей полюстер арасындағы өзара әсер' },
-    { id: 8, dir: 'down',   row: 4, col: 9, answer: 'ФЕРРО',    clue: '...магнетизм — темір тәрізді материалдардың қасиеті' },
-    { id: 10,dir: 'down',   row: 6, col: 5, answer: 'БОЛАТ',    clue: 'Тұрақты магнит жасалатын қатты материал' }
-  ];
-
-  const CW_ROWS = 13, CW_COLS = 12;
-  const cwGridArr = Array.from({length: CW_ROWS}, () => Array(CW_COLS).fill(null));
+function buildCrossword(){
+  // reset grid
+  grid = Array.from({length: ROWS}, () => Array(COLS).fill(null));
 
   // place letters
-  CW_WORDS.forEach(w=>{
+  WORDS.forEach(w=>{
     for(let i=0;i<w.answer.length;i++){
-      const r = w.dir==='across' ? w.row : w.row+i;
-      const c = w.dir==='across' ? w.col+i : w.col;
-      cwGridArr[r][c] = { letter: w.answer[i], num: null };
+      const r = (w.dir==='across') ? w.row : w.row+i;
+      const c = (w.dir==='across') ? w.col+i : w.col;
+      grid[r][c] = { letter: w.answer[i], num: null };
     }
   });
+
   // place numbers
-  CW_WORDS.forEach(w=>{
-    const r=w.row,c=w.col;
-    if(cwGridArr[r][c]) cwGridArr[r][c].num = w.id;
+  WORDS.forEach(w=>{
+    if(grid[w.row][w.col]) grid[w.row][w.col].num = w.id;
   });
 
   // bounds
-  let minR=CW_ROWS, maxR=0, minC=CW_COLS, maxC=0;
-  for(let r=0;r<CW_ROWS;r++){
-    for(let c=0;c<CW_COLS;c++){
-      if(cwGridArr[r][c]){
-        minR=Math.min(minR,r); maxR=Math.max(maxR,r);
-        minC=Math.min(minC,c); maxC=Math.max(maxC,c);
+  let minRow = ROWS, maxRow = 0, minCol = COLS, maxCol = 0;
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      if(grid[r][c]){
+        minRow=Math.min(minRow,r); maxRow=Math.max(maxRow,r);
+        minCol=Math.min(minCol,c); maxCol=Math.max(maxCol,c);
       }
     }
   }
 
-  const cwEl = $("cwGrid");
-  const visRows = maxR - minR + 1;
-  const visCols = maxC - minC + 1;
-  cwEl.style.gridTemplateColumns = `repeat(${visCols}, auto)`;
-  cwEl.style.gridTemplateRows = `repeat(${visRows}, auto)`;
+  const visRows = maxRow-minRow+1;
+  const visCols = maxCol-minCol+1;
 
-  const cwInputMap = {}; // "r,c" -> input
-  function cwGetCellEl(r,c){ return document.querySelector(`.cw-cell[data-r="${r}"][data-c="${c}"]`); }
+  const gridEl = $("crossword-grid");
+  gridEl.innerHTML = "";
+  gridEl.style.gridTemplateColumns = `repeat(${visCols}, auto)`;
+  gridEl.style.gridTemplateRows = `repeat(${visRows}, auto)`;
 
-  for(let r=minR;r<=maxR;r++){
-    for(let c=minC;c<=maxC;c++){
-      const cell=document.createElement("div");
-      cell.className="cw-cell";
-      if(cwGridArr[r][c]){
+  inputMap = {};
+
+  for(let r=minRow;r<=maxRow;r++){
+    for(let c=minCol;c<=maxCol;c++){
+      const cell = document.createElement("div");
+      cell.className="cell";
+      const key = `${r},${c}`;
+
+      if(grid[r][c]){
         cell.classList.add("active");
-        cell.dataset.r = r;
-        cell.dataset.c = c;
+        cell.dataset.row=r; cell.dataset.col=c;
 
-        if(cwGridArr[r][c].num){
-          const n=document.createElement("span");
-          n.className="num";
-          n.textContent=cwGridArr[r][c].num;
-          cell.appendChild(n);
+        if(grid[r][c].num){
+          const numEl=document.createElement("span");
+          numEl.className="num";
+          numEl.textContent=grid[r][c].num;
+          cell.appendChild(numEl);
         }
 
         const inp=document.createElement("input");
         inp.type="text";
         inp.maxLength=1;
-        inp.autocomplete="off";
-        inp.spellcheck=false;
-
+        inp.dataset.row=r; inp.dataset.col=c;
+        inp.autocomplete="off"; inp.spellcheck=false;
         cell.appendChild(inp);
-        cwInputMap[`${r},${c}`]=inp;
+        inputMap[key]=inp;
 
-        inp.addEventListener("input", ()=>{
-          const val = inp.value.toUpperCase().replace(/[^А-ЯҒҚҢӨҰҮІЁ]/g,"");
+        inp.addEventListener("input",(e)=>{
+          const val = e.target.value.toUpperCase().replace(/[^А-ЯҒҚҢӨҰҮІЁA-ZА-Яа-я]/g,'');
           inp.value = val ? val[val.length-1] : "";
-          if(inp.value) cwMoveNext(r,c);
+          if(inp.value) moveNext(r,c);
         });
 
-        inp.addEventListener("keydown", (e)=>{
-          if(e.key==="Backspace" && !inp.value) cwMovePrev(r,c);
-          if(e.key==="ArrowRight"){e.preventDefault(); cwFocus(r,c+1);}
-          if(e.key==="ArrowLeft"){e.preventDefault(); cwFocus(r,c-1);}
-          if(e.key==="ArrowDown"){e.preventDefault(); cwFocus(r+1,c);}
-          if(e.key==="ArrowUp"){e.preventDefault(); cwFocus(r-1,c);}
+        inp.addEventListener("keydown",(e)=>{
+          if(e.key==="Backspace" && !inp.value) movePrev(r,c);
+          if(e.key==="ArrowRight"){e.preventDefault(); focusCell(r,c+1);}
+          if(e.key==="ArrowLeft"){e.preventDefault(); focusCell(r,c-1);}
+          if(e.key==="ArrowDown"){e.preventDefault(); focusCell(r+1,c);}
+          if(e.key==="ArrowUp"){e.preventDefault(); focusCell(r-1,c);}
         });
 
-        inp.addEventListener("focus", ()=>{
-          cwClearHL();
+        inp.addEventListener("focus",()=>{
+          clearHighlight();
           cell.classList.add("selected");
-          cwHighlightWord(r,c);
+          highlightWord(r,c);
         });
       }
-      cwEl.appendChild(cell);
-    }
-  }
 
-  function cwFocus(r,c){
-    const inp = cwInputMap[`${r},${c}`];
-    if(inp) inp.focus();
-  }
-  function cwMoveNext(r,c){
-    if(cwInputMap[`${r},${c+1}`]) return cwFocus(r,c+1);
-    if(cwInputMap[`${r+1},${c}`]) return cwFocus(r+1,c);
-  }
-  function cwMovePrev(r,c){
-    if(cwInputMap[`${r},${c-1}`]) return cwFocus(r,c-1);
-    if(cwInputMap[`${r-1},${c}`]) return cwFocus(r-1,c);
-  }
-  function cwClearHL(){
-    document.querySelectorAll(".cw-cell").forEach(x=>x.classList.remove("highlight","selected"));
-  }
-  function cwHighlightWord(r,c){
-    CW_WORDS.forEach(w=>{
-      for(let i=0;i<w.answer.length;i++){
-        const wr = w.dir==='across' ? w.row : w.row+i;
-        const wc = w.dir==='across' ? w.col+i : w.col;
-        if(wr===r && wc===c){
-          for(let j=0;j<w.answer.length;j++){
-            const hr = w.dir==='across' ? w.row : w.row+j;
-            const hc = w.dir==='across' ? w.col+j : w.col;
-            const el = cwGetCellEl(hr,hc);
-            if(el) el.classList.add("highlight");
-          }
-        }
-      }
-    });
+      gridEl.appendChild(cell);
+    }
   }
 
   // clues
-  const across = $("cwAcross");
-  const down = $("cwDown");
-  function addClue(w, container){
-    const div=document.createElement("div");
-    div.className="cw-clue";
-    div.innerHTML = `<span class="n">${w.id}</span><span class="t">${w.clue}</span>`;
-    div.addEventListener("click", ()=>cwFocus(w.row,w.col));
-    container.appendChild(div);
-  }
-  CW_WORDS.filter(w=>w.dir==="across").forEach(w=>addClue(w,across));
-  CW_WORDS.filter(w=>w.dir==="down").forEach(w=>addClue(w,down));
+  const acrossDiv=$("across-clues");
+  const downDiv=$("down-clues");
+  acrossDiv.innerHTML=""; downDiv.innerHTML="";
 
-  function cwComputeScore(){
-    // count letters
-    let total=0, correct=0;
-    CW_WORDS.forEach(w=>{
-      for(let i=0;i<w.answer.length;i++){
-        const r = w.dir==='across' ? w.row : w.row+i;
-        const c = w.dir==='across' ? w.col+i : w.col;
-        const inp = cwInputMap[`${r},${c}`];
-        const cell = cwGetCellEl(r,c);
-        if(!inp) continue;
-        total++;
-        if(inp.value.toUpperCase() === w.answer[i]){
-          correct++;
-          cell?.classList.add("correct");
-          cell?.classList.remove("wrong");
-        }else if(inp.value){
-          cell?.classList.add("wrong");
-          cell?.classList.remove("correct");
-        }else{
-          cell?.classList.remove("wrong","correct");
+  WORDS.filter(w=>w.dir==="across").forEach(w=>{
+    const div=document.createElement("div");
+    div.className="clueItem";
+    div.innerHTML=`<span class="clueNum">${w.id}</span><span class="clueText">${w.clue}</span>`;
+    div.addEventListener("click",()=>focusCell(w.row,w.col));
+    acrossDiv.appendChild(div);
+  });
+
+  WORDS.filter(w=>w.dir==="down").forEach(w=>{
+    const div=document.createElement("div");
+    div.className="clueItem";
+    div.innerHTML=`<span class="clueNum">${w.id}</span><span class="clueText">${w.clue}</span>`;
+    div.addEventListener("click",()=>focusCell(w.row,w.col));
+    downDiv.appendChild(div);
+  });
+}
+
+function focusCell(r,c){
+  const inp = inputMap[`${r},${c}`];
+  if(inp) inp.focus();
+}
+function moveNext(r,c){
+  if(inputMap[`${r},${c+1}`]) return focusCell(r,c+1);
+  if(inputMap[`${r+1},${c}`]) return focusCell(r+1,c);
+}
+function movePrev(r,c){
+  if(inputMap[`${r},${c-1}`]) return focusCell(r,c-1);
+  if(inputMap[`${r-1},${c}`]) return focusCell(r-1,c);
+}
+function clearHighlight(){
+  document.querySelectorAll(".cell").forEach(el=>{
+    el.classList.remove("highlighted","selected");
+  });
+}
+function getCellEl(r,c){
+  return document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+}
+function highlightWord(r,c){
+  WORDS.forEach(w=>{
+    for(let i=0;i<w.answer.length;i++){
+      const wr = (w.dir==="across") ? w.row : w.row+i;
+      const wc = (w.dir==="across") ? w.col+i : w.col;
+      if(wr===r && wc===c){
+        for(let j=0;j<w.answer.length;j++){
+          const hr = (w.dir==="across") ? w.row : w.row+j;
+          const hc = (w.dir==="across") ? w.col+j : w.col;
+          const cellEl = getCellEl(hr,hc);
+          if(cellEl) cellEl.classList.add("highlighted");
         }
       }
-    });
-
-    // scale to /40
-    const score = total ? Math.round((correct/total)*40) : 0;
-    state.cwScore = clamp(score,0,40);
-    $("cwScore").textContent = state.cwScore;
-
-    const msg = $("cwMsg");
-    if(correct===total && total>0){
-      msg.className="cw-result ok";
-      msg.textContent = "✓ Барлығы дұрыс! Керемет!";
-    }else{
-      msg.className="cw-result warn";
-      msg.textContent = `${correct} / ${total} дұрыс • Ұпай: ${state.cwScore}/40`;
     }
+  });
+}
 
-    computeTotal();
-  }
+// Проверка кроссворда: считаем процент совпадений
+function checkCrossword(){
+  let total=0, correct=0;
 
-  function cwReveal(){
-    CW_WORDS.forEach(w=>{
-      for(let i=0;i<w.answer.length;i++){
-        const r = w.dir==='across' ? w.row : w.row+i;
-        const c = w.dir==='across' ? w.col+i : w.col;
-        const inp = cwInputMap[`${r},${c}`];
-        const cell = cwGetCellEl(r,c);
-        if(inp){ inp.value = w.answer[i]; }
-        cell?.classList.add("correct");
-        cell?.classList.remove("wrong");
+  WORDS.forEach(w=>{
+    for(let i=0;i<w.answer.length;i++){
+      const r = (w.dir==="across") ? w.row : w.row+i;
+      const c = (w.dir==="across") ? w.col+i : w.col;
+      const inp = inputMap[`${r},${c}`];
+      const cellEl = getCellEl(r,c);
+      if(!inp) continue;
+
+      total++;
+      if(inp.value.toUpperCase() === w.answer[i]){
+        correct++;
+        cellEl?.classList.add("correct");
+        cellEl?.classList.remove("wrong");
+      }else if(inp.value){
+        cellEl?.classList.add("wrong");
+        cellEl?.classList.remove("correct");
+      }else{
+        cellEl?.classList.remove("wrong","correct");
       }
-    });
-    state.cwScore = 40; // если показали ответы — можно оставить 40 или 0; оставим 40 ТОЛЬКО если учитель разрешает.
-    // Хочешь честнее: поставь 0 вместо 40.
-    $("cwMsg").className="cw-result";
-    $("cwMsg").textContent="Жауаптар көрсетілді";
-    $("cwScore").textContent = state.cwScore;
-    computeTotal();
-  }
+    }
+  });
 
-  function cwReset(){
-    Object.values(cwInputMap).forEach(inp=>inp.value="");
-    document.querySelectorAll(".cw-cell").forEach(c=>c.classList.remove("correct","wrong","highlight","selected"));
-    $("cwMsg").textContent="";
-    state.cwScore = 0;
-    $("cwScore").textContent="0";
-    computeTotal();
-  }
+  const percent = total ? Math.round((correct/total)*100) : 0;
+  state.crosswordPercent = percent;
 
-  $("cwCheck").addEventListener("click", cwComputeScore);
-  $("cwReveal").addEventListener("click", cwReveal);
-  $("cwReset").addEventListener("click", cwReset);
+  const score = (percent >= 80) ? 1 : 0;
+  state.crosswordScore = score;
 
-  // expose to outer reset
-  window.cwReset = cwReset;
+  $("scoreCrossword").textContent = score.toFixed(0);
+  $("msgCrossword").textContent = `Дұрыстық: ${percent}% (${correct}/${total})`;
 
-  // INIT
-  loadFromStorage();
-  computeTotal();
+  updateTotals();
+}
+
+function resetCrossword(){
+  Object.values(inputMap).forEach(inp=>inp.value="");
+  document.querySelectorAll(".cell").forEach(c=>c.classList.remove("correct","wrong"));
+  $("msgCrossword").textContent="";
+  state.crosswordScore = 0;
+  state.crosswordPercent = 0;
+  $("scoreCrossword").textContent="0";
+  updateTotals();
+}
+
+/* ==========================
+   EXPORT / RESET
+   ========================== */
+$("btnMakeText").addEventListener("click", makeExportText);
+$("btnExport").addEventListener("click", ()=>{
+  makeExportText();
+  const txt = $("exportBox").textContent.trim();
+  if(txt) navigator.clipboard?.writeText(txt).catch(()=>{});
+});
+
+function makeExportText(){
+  const main = state.compass + state.poles + state.lines;
+  const total = main + state.miniScore + state.crosswordScore + state.reflection;
+
+  const text =
+`EduPhysics AI — «Тұрақты магниттер»
+Нәтиже: ${total}/10
+
+1) ҚМЖ негізгі тапсырма: ${main}/6
+  - Компас (X,Y,Z,T): ${state.compass}/3
+  - Полюстер: ${state.poles}/2
+  - Күш сызықтары (дұрыс: б): ${state.lines}/1
+
+2) Мини-сұрақтар: ${state.miniScore}/2 (дұрыс: ${state.miniCorrect}/9)
+
+3) Кроссворд: ${state.crosswordScore}/1 (дұрыстық: ${state.crosswordPercent}%)
+
+4) Рефлексия: ${state.reflection}/1
+
+Деңгей: ${$("tagLevel").textContent}
+Кері байланыс: ${$("fbTitle").textContent} — ${$("fbText").textContent}`;
+
+  $("exportBox").textContent = text;
+}
+
+/* ==========================
+   RESET ALL
+   ========================== */
+$("btnReset").addEventListener("click", ()=>{
+  // сброс инпутов
+  ["dirX","dirY","dirZ","dirT","poleLeft","poleRight"].forEach(id=>$(id).value="");
+  document.querySelectorAll('input[name="lines"]').forEach(r=>r.checked=false);
+
+  // mini
+  MINI.forEach(item=>{
+    $(`miniInp${item.id}`).value="";
+    const st=$(`miniStatus${item.id}`);
+    st.textContent="—";
+    st.className="miniStatus";
+  });
+  $("miniCorrect").textContent="0";
+  $("scoreMini").textContent="0";
+  $("msgMini").textContent="";
+
+  // crossword
+  resetCrossword();
+
+  // scores
+  state.compass=0; state.poles=0; state.lines=0;
+  state.miniCorrect=0; state.miniScore=0;
+  state.reflection=0;
+
+  $("scoreCompass").textContent="0";
+  $("scorePoles").textContent="0";
+  $("scoreLines").textContent="0";
+  $("msgCompass").textContent="";
+  $("msgPoles").textContent="";
+  $("msgLines").textContent="";
+  $("exportBox").textContent="";
+
+  localStorage.removeItem(STORAGE_KEY);
+
+  updateTotals();
+});
+
+/* ==========================
+   INIT
+   ========================== */
+buildMiniUI();
+buildCrossword();
+loadState();
+
+// восстановим UI из state (частично)
+$("scoreCompass").textContent = state.compass.toFixed(0);
+$("scorePoles").textContent = state.poles.toFixed(0);
+$("scoreLines").textContent = state.lines.toFixed(0);
+$("miniCorrect").textContent = state.miniCorrect.toFixed(0);
+$("scoreMini").textContent = state.miniScore.toFixed(0);
+$("scoreCrossword").textContent = state.crosswordScore.toFixed(0);
+$("sumRef").textContent = state.reflection.toFixed(0);
+
+updateTotals();
 </script>
 </body>
 </html>
