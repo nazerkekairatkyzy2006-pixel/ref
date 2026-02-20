@@ -3,355 +3,358 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EduPhysics AI — Рефлексия</title>
-
+  <title>Тұрақты магниттер — Рефлексия (2-бет)</title>
   <style>
     :root{
-      --bg: #f5efe6;
-      --bg2:#efe2d0;
-      --card:#fffaf2;
-      --stroke:#e2d4c2;
-      --text:#2b241c;
-      --muted:#6d5b4b;
+      --bg1:#f6f1e7;
+      --bg2:#efe2cf;
+      --card:rgba(255,255,255,.72);
+      --stroke:rgba(70,40,20,.16);
+      --text:#2b1d14;
+      --muted:#6a4f3d;
 
-      --accent:#b08968;
-      --accent2:#7f5539;
-      --ok:#2f7a4f;
-      --warn:#b07d12;
-      --bad:#a13a3a;
+      --accent:#7a4b2a;
+      --accent2:#c57f4a;
 
-      --shadow: 0 12px 30px rgba(43,36,28,.12);
-      --radius: 16px;
+      --shadow:0 18px 45px rgba(45,25,10,.14);
+      --shadow2:0 10px 28px rgba(45,25,10,.10);
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
       background:
-        radial-gradient(900px 520px at 20% 10%, rgba(176,137,104,.18), transparent 60%),
-        radial-gradient(820px 520px at 85% 15%, rgba(127,85,57,.14), transparent 60%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
+        radial-gradient(1100px 520px at 20% 10%, rgba(197,127,74,.22), transparent 60%),
+        radial-gradient(900px 480px at 80% 25%, rgba(122,75,42,.18), transparent 55%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
       min-height:100vh;
     }
+
     header{
       position:sticky; top:0; z-index:10;
-      background: rgba(245,239,230,.85);
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--stroke);
+      background: rgba(246,241,231,.78);
+      border-bottom:1px solid var(--stroke);
     }
-    .top{
-      max-width:980px;
-      margin:0 auto;
-      padding:14px 16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+    .head{
+      max-width:1000px; margin:0 auto; padding:14px 16px;
+      display:flex; gap:14px; align-items:center; justify-content:space-between;
       flex-wrap:wrap;
     }
-    h1{margin:0; font-size:16px}
-    .sub{margin:2px 0 0; color:var(--muted); font-size:12.5px}
-    .nav{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .btn{
-      cursor:pointer;
+    .title h1{margin:0; font-size:16px}
+    .title p{margin:4px 0 0; font-size:12.5px; color:var(--muted)}
+
+    nav{display:flex; gap:10px; flex-wrap:wrap;}
+    .navlink{
+      text-decoration:none; color:var(--text);
+      font-weight:900; font-size:12.5px;
+      padding:9px 12px; border-radius:999px;
       border:1px solid var(--stroke);
-      background: rgba(255,255,255,.75);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:14px;
-      font-weight:900;
-      transition: transform .12s, filter .12s;
+      background:rgba(255,255,255,.55);
+      box-shadow: var(--shadow2);
     }
-    .btn:hover{transform: translateY(-1px); filter: brightness(1.03)}
-    .btn.primary{
-      background: linear-gradient(90deg, rgba(176,137,104,.95), rgba(127,85,57,.92));
-      border:0;
-      color:#fffaf2;
+    .navlink.primary{
+      background: linear-gradient(135deg, rgba(197,127,74,.35), rgba(122,75,42,.18));
     }
 
-    main{max-width:980px; margin:0 auto; padding:16px; display:grid; gap:14px}
+    main{max-width:1000px; margin:0 auto; padding:16px; display:grid; gap:14px;}
     .card{
-      background: var(--card);
+      background:var(--card);
       border:1px solid var(--stroke);
-      border-radius: var(--radius);
+      border-radius:18px;
       padding:14px;
       box-shadow: var(--shadow);
     }
-    .muted{color:var(--muted); font-size:13px; line-height:1.5}
-    .hr{height:1px; background: rgba(226,212,194,.9); margin:12px 0}
-    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-    .pill{
-      display:inline-flex; gap:8px; align-items:center;
-      padding:8px 12px; border-radius:999px;
-      background: rgba(255,255,255,.7);
+
+    .muted{color:var(--muted); font-size:13px; margin:0 0 10px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .btn{
+      cursor:pointer;
+      border:0;
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:1000;
+      color:var(--text);
+      background: rgba(255,255,255,.65);
       border:1px solid var(--stroke);
-      color:var(--muted);
-      font-size:12px;
+      box-shadow: var(--shadow2);
     }
-    .tag{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:900;
-      border:1px solid var(--stroke);
-      white-space:nowrap;
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(197,127,74,.45), rgba(122,75,42,.22));
     }
-    .tag.ok{color:var(--ok); background: rgba(47,122,79,.10); border-color: rgba(47,122,79,.25)}
-    .tag.bad{color:var(--bad); background: rgba(161,58,58,.10); border-color: rgba(161,58,58,.25)}
-    label{display:block; margin:6px 0; font-size:13px}
+    .btn.ghost{background:transparent;}
+    .btn:hover{transform:translateY(-1px)}
+
+    .hr{height:1px; background: var(--stroke); margin:12px 0}
+
     input[type="text"], textarea, select{
       width:100%;
       padding:10px 10px;
       border-radius:14px;
       border:1px solid var(--stroke);
-      background: rgba(255,255,255,.75);
+      background: rgba(255,255,255,.65);
       color:var(--text);
       outline:none;
     }
-    textarea{min-height:90px; resize:vertical}
+    textarea{min-height:92px; resize:vertical;}
 
-    .meter{
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      background: rgba(255,255,255,.65);
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns:1fr;
+    }
+    @media(min-width:920px){ .grid{grid-template-columns:1fr 1fr;} }
+
+    .station{
+      border:1px dashed var(--stroke);
+      border-radius:18px;
       padding:12px;
+      background: rgba(255,255,255,.55);
     }
-    .rangeRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-    input[type="range"]{width: min(520px, 100%);}
-    .big{font-size:28px; font-weight:1000}
-    .small{font-size:12px; color:var(--muted)}
-    .grid2{display:grid; gap:12px}
-    @media (min-width:820px){ .grid2{grid-template-columns: 1fr 1fr} }
 
-    pre{
-      white-space:pre-wrap;
-      background: rgba(255,255,255,.7);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      padding:10px;
-      min-height:60px;
+    .mood{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
     }
+    .chip{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.7);
+      cursor:pointer;
+      font-weight:1000;
+      user-select:none;
+    }
+    .chip.active{
+      outline:3px solid rgba(197,127,74,.30);
+      background: rgba(197,127,74,.20);
+    }
+
+    .miniScore{
+      padding:10px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.55);
+      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+
+    pre{white-space:pre-wrap; margin:10px 0 0; color:var(--muted); font-size:12px}
+    .small{font-size:12px; color:var(--muted)}
   </style>
 </head>
 
 <body>
 <header>
-  <div class="top">
-    <div>
-      <h1>2-бет: Рефлексия • «Тұрақты магниттер»</h1>
-      <div class="sub">Рефлексия — 1 балл (толық толтырса автомат қосылады)</div>
+  <div class="head">
+    <div class="title">
+      <h1>2-бет: Рефлексия (ерекше формат)</h1>
+      <p>“Mood + Compass Check + Exit Ticket” — дайын мәтінді бір батырмамен көшіруге/жіберуге болады</p>
     </div>
-    <div class="nav">
-      <a class="btn" href="index.html">← 1-бетке қайту</a>
-      <span class="pill">Рефлексия ұпайы: <b id="refScore">0</b>/1</span>
-      <button class="btn primary" id="btnSave">Сақтау</button>
-    </div>
+    <nav>
+      <a class="navlink" href="index.html">← 1-бет</a>
+      <a class="navlink primary" href="reflection.html">2-бет</a>
+    </nav>
   </div>
 </header>
 
 <main>
   <section class="card">
-    <h2>Рефлексия критерийі</h2>
-    <p class="muted">
-      Бағалау критерийі: сабақтан алған білімін қорытындылайды.<br>
-      Дескриптор: рефлексия бөлімдерін толтырады (кемінде 2 бөлім + 1 қысқа қорытынды).<br>
-      Ұпай: <b>0–1 балл</b>
-    </p>
-  </section>
+    <h2>Рефлексияны толтыру</h2>
+    <p class="muted">Бұл бетте ұпай қуаламаймыз — мақсат: оқушының түсінігін ашу және мұғалімге дайын кері байланыс беру.</p>
 
-  <section class="card">
-    <h2>1) «Магнит күші» mood-meter (стандарттан тыс элемент)</h2>
-    <div class="meter">
-      <p class="muted">Өзіңді бағала: бүгінгі түсіну деңгейің “магнит күші” сияқты қанша?</p>
-      <div class="rangeRow">
-        <input type="range" id="range" min="0" max="100" step="5" value="50">
-        <div class="big"><span id="rangeVal">50</span>%</div>
-      </div>
-      <div class="small">0% — қиналдым • 50% — орташа • 100% — толық түсіндім</div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>2) 3–2–1</h2>
-    <div class="grid2">
+    <div class="miniScore">
       <div>
-        <label>3 нәрсе білдім</label>
-        <textarea id="k3" placeholder="3 ой жаз..."></textarea>
+        <b>1-беттегі ұпай (қаласаң көрінеді)</b>
+        <div class="small">index.html есептеген нәтижені осы бет те оқиды</div>
       </div>
-      <div>
-        <label>2 қиындық</label>
-        <textarea id="k2" placeholder="2 қиындық жаз..."></textarea>
-      </div>
-      <div>
-        <label>1 сұрақ</label>
-        <input type="text" id="k1" placeholder="1 сұрақ жаз..." />
-      </div>
-      <div>
-        <label>Келесі қадам (не істеймін?)</label>
-        <input type="text" id="next" placeholder="Мысалы: N→S бағытын қайталап, 2 тапсырма шығарамын" />
+      <div style="font-weight:1000;font-size:18px;">
+        <span id="scoreFromPage1">0</span> / 10
       </div>
     </div>
-  </section>
 
-  <section class="card">
-    <h2>3) Бір сөйлемдік қорытынды</h2>
-    <p class="muted">“Бүгін мен … түсіндім, себебі …”</p>
-    <input type="text" id="oneLine" placeholder="Бүгін мен ..." />
-  </section>
+    <div class="hr"></div>
 
-  <section class="card">
-    <h2>Қорытынды мәтін</h2>
-    <div class="row">
-      <button class="btn primary" id="btnMakeText">Мәтін жасау</button>
-      <button class="btn" id="btnCopy">Көшіру</button>
-      <span id="savedTag" class="tag bad">Сақталмады</span>
+    <div class="grid">
+      <div class="station">
+        <h3 style="margin:0 0 6px;">1) Mood Meter (көңіл-күй)</h3>
+        <p class="muted">Сабақтан кейінгі күйіңді белгіле.</p>
+
+        <div class="mood" id="moodBox">
+          <div class="chip" data-v="😀 Көңілді">😀 Көңілді</div>
+          <div class="chip" data-v="🙂 Жақсы">🙂 Жақсы</div>
+          <div class="chip" data-v="😐 Бейтарап">😐 Бейтарап</div>
+          <div class="chip" data-v="😕 Қиындау">😕 Қиындау</div>
+          <div class="chip" data-v="😣 Мүлде түсінбедім">😣 Түсінбедім</div>
+        </div>
+
+        <p class="small" style="margin-top:10px;">Таңдалған mood: <b id="moodText">таңдалмады</b></p>
+      </div>
+
+      <div class="station">
+        <h3 style="margin:0 0 6px;">2) Compass Check (1 сөйлемдік қорытынды)</h3>
+        <p class="muted">“Магнит өрісінің күш сызықтары…” сөйлемін аяқта:</p>
+        <input id="oneSentence" type="text" placeholder="Мысалы: ... сыртқы кеңістікте N→S бағытталады, ал тығыздық өріс күшін білдіреді." />
+        <p class="small">Мақсат: негізгі ойды өз сөзіңмен айту.</p>
+      </div>
+
+      <div class="station">
+        <h3 style="margin:0 0 6px;">3) Exit Ticket (3–2–1 ерекше)</h3>
+        <p class="muted">Тізіммен емес, қысқа “хат” стилінде жаз:</p>
+        <textarea id="exitTicket" placeholder="Бүгін мен ... білдім. Ең қиын болғаны ... Себебі ... Келесі сабақта сұрағым ..."></textarea>
+        <p class="small">Кемінде 2–3 сөйлем жеткілікті.</p>
+      </div>
+
+      <div class="station">
+        <h3 style="margin:0 0 6px;">4) Кері байланыс (мұғалімге дайын)</h3>
+        <p class="muted">Өзің туралы қысқа мәлімет енгіз (хатқа кірсін):</p>
+        <label>Атың:</label>
+        <input id="studentName" type="text" placeholder="Мысалы: Диана" />
+        <label>Сыныбың:</label>
+        <input id="studentClass" type="text" placeholder="Мысалы: 8А" />
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="btnBuild">Мәтінді құрастыру</button>
+          <button class="btn" id="btnCopy">Көшіру</button>
+          <button class="btn ghost" id="btnClear">Тазалау</button>
+        </div>
+
+        <pre id="resultText"></pre>
+
+        <div class="hr"></div>
+
+        <h3 style="margin:0 0 6px;">“Жіберу” батырмасы</h3>
+        <p class="small">
+          Бұл батырма Gmail/поштаны ашады. <br>
+          Тек бір рет қана төмендегі <b>YOUR_EMAIL_HERE@gmail.com</b> жеріне өз email-ыңды қойып кет.
+        </p>
+
+        <div class="row">
+          <button class="btn primary" id="btnSend">Жіберу (Gmail ашады)</button>
+        </div>
+      </div>
     </div>
-    <pre id="out"></pre>
-    <p class="small">Бұл мәтінді мұғалімге жіберуге ыңғайлы (WhatsApp/Email).</p>
   </section>
 </main>
 
 <script>
-/* ==========================
-   STORAGE (same as index)
-   ========================== */
-const STORAGE_KEY = "edu_magnets_v3_state";
-const REF_KEY = "edu_magnets_v3_reflection";
+  const $ = (id)=>document.getElementById(id);
 
-const $ = (id)=>document.getElementById(id);
-
-function loadState(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if(!raw) return { reflection:0 };
-  try{ return JSON.parse(raw); }catch(e){ return { reflection:0 }; }
-}
-function saveState(s){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
-}
-
-function loadRef(){
-  const raw = localStorage.getItem(REF_KEY);
-  if(!raw) return null;
-  try{ return JSON.parse(raw); }catch(e){ return null; }
-}
-function saveRef(r){
-  localStorage.setItem(REF_KEY, JSON.stringify(r));
-}
-
-/* ==========================
-   UI
-   ========================== */
-$("range").addEventListener("input", ()=>{
-  $("rangeVal").textContent = $("range").value;
-});
-
-$("btnSave").addEventListener("click", ()=>{
-  const r = collectRef();
-  const score = computeRefScore(r);
-
-  // update main state
-  const s = loadState();
-  s.reflection = score;
-  saveState(s);
-
-  // save reflection text itself
-  saveRef({ ...r, score, savedAt: new Date().toISOString() });
-
-  $("refScore").textContent = score.toFixed(0);
-  $("savedTag").className = score ? "tag ok" : "tag bad";
-  $("savedTag").textContent = score ? "Сақталды" : "Толық емес";
-
-  makeText();
-});
-
-$("btnMakeText").addEventListener("click", makeText);
-$("btnCopy").addEventListener("click", ()=>{
-  makeText();
-  const txt = $("out").textContent.trim();
-  if(txt) navigator.clipboard?.writeText(txt).catch(()=>{});
-});
-
-function collectRef(){
-  return {
-    mood: Number($("range").value),
-    k3: $("k3").value.trim(),
-    k2: $("k2").value.trim(),
-    k1: $("k1").value.trim(),
-    next: $("next").value.trim(),
-    oneLine: $("oneLine").value.trim(),
-  };
-}
-
-// Русский: логика начисления 1 балла (мягко, без “жесткого” ҚБ)
-function computeRefScore(r){
-  const filledA = r.k3.length >= 10;
-  const filledB = r.k2.length >= 6;
-  const filledC = r.k1.length >= 3;
-  const filledD = r.next.length >= 6;
-  const filledE = r.oneLine.length >= 8;
-
-  // минимум: 2 блока из (3-2-1) и + 1 строка/next
-  const count321 = [filledA, filledB, filledC].filter(Boolean).length;
-  const hasConclusion = filledD || filledE;
-
-  return (count321 >= 2 && hasConclusion) ? 1 : 0;
-}
-
-function makeText(){
-  const r = collectRef();
-  const score = computeRefScore(r);
-  $("refScore").textContent = score.toFixed(0);
-
-  const text =
-`EduPhysics AI — Рефлексия (Тұрақты магниттер)
-Рефлексия ұпайы: ${score}/1
-Mood-meter: ${r.mood}%
-
-3 нәрсе білдім:
-${r.k3 || "(жоқ)"}
-
-2 қиындық:
-${r.k2 || "(жоқ)"}
-
-1 сұрақ:
-${r.k1 || "(жоқ)"}
-
-Келесі қадам:
-${r.next || "(жоқ)"}
-
-Бір сөйлемдік қорытынды:
-${r.oneLine || "(жоқ)"}`;
-
-  $("out").textContent = text;
-}
-
-/* ==========================
-   INIT (restore)
-   ========================== */
-(function init(){
-  const s = loadState();
-  $("refScore").textContent = (s.reflection || 0).toFixed(0);
-
-  const r = loadRef();
-  if(r){
-    $("range").value = r.mood ?? 50;
-    $("rangeVal").textContent = $("range").value;
-
-    $("k3").value = r.k3 ?? "";
-    $("k2").value = r.k2 ?? "";
-    $("k1").value = r.k1 ?? "";
-    $("next").value = r.next ?? "";
-    $("oneLine").value = r.oneLine ?? "";
-
-    $("savedTag").className = (r.score ? "tag ok" : "tag bad");
-    $("savedTag").textContent = (r.score ? "Сақталды" : "Толық емес");
-    makeText();
-  }else{
-    $("rangeVal").textContent = $("range").value;
+  // Load score from page1 storage
+  function loadScore(){
+    const raw = localStorage.getItem("magnet_qmj_v1");
+    if(!raw) { $("scoreFromPage1").textContent="0"; return; }
+    try{
+      const d = JSON.parse(raw);
+      const s = d?.state || {};
+      const total = (s.test||0)+(s.compass||0)+(s.lines||0)+(s.poles||0)+(s.crossword||0);
+      $("scoreFromPage1").textContent = total;
+    }catch(e){
+      $("scoreFromPage1").textContent="0";
+    }
   }
-})();
+
+  // Mood chips
+  let mood = "";
+  document.querySelectorAll(".chip").forEach(ch=>{
+    ch.addEventListener("click", ()=>{
+      document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));
+      ch.classList.add("active");
+      mood = ch.dataset.v;
+      $("moodText").textContent = mood;
+      save();
+    });
+  });
+
+  function save(){
+    localStorage.setItem("magnet_reflection_v1", JSON.stringify({
+      mood,
+      oneSentence: $("oneSentence").value,
+      exitTicket: $("exitTicket").value,
+      studentName: $("studentName").value,
+      studentClass: $("studentClass").value
+    }));
+  }
+  function load(){
+    const raw = localStorage.getItem("magnet_reflection_v1");
+    if(!raw) return;
+    try{
+      const d = JSON.parse(raw);
+      mood = d.mood || "";
+      $("oneSentence").value = d.oneSentence || "";
+      $("exitTicket").value = d.exitTicket || "";
+      $("studentName").value = d.studentName || "";
+      $("studentClass").value = d.studentClass || "";
+
+      if(mood){
+        $("moodText").textContent = mood;
+        document.querySelectorAll(".chip").forEach(ch=>{
+          if(ch.dataset.v === mood) ch.classList.add("active");
+        });
+      }
+    }catch(e){}
+  }
+
+  ["oneSentence","exitTicket","studentName","studentClass"].forEach(id=>{
+    $(id).addEventListener("input", save);
+  });
+
+  function buildText(){
+    const score = $("scoreFromPage1").textContent;
+    const name = $("studentName").value.trim() || "Оқушы";
+    const cls  = $("studentClass").value.trim() || "8-сынып";
+    const m = mood || "таңдалмады";
+    const one = $("oneSentence").value.trim() || "(жоқ)";
+    const ex  = $("exitTicket").value.trim() || "(жоқ)";
+
+    const text =
+`Тақырып: Тұрақты магниттер (рефлексия)
+Оқушы: ${name} (${cls})
+Нәтиже (1-бет): ${score}/10
+Mood: ${m}
+
+Compass Check (1 сөйлем):
+${one}
+
+Exit Ticket:
+${ex}
+`;
+    $("resultText").textContent = text;
+    return text;
+  }
+
+  $("btnBuild").addEventListener("click", buildText);
+
+  $("btnCopy").addEventListener("click", ()=>{
+    const t = buildText();
+    navigator.clipboard?.writeText(t).catch(()=>{});
+  });
+
+  $("btnClear").addEventListener("click", ()=>{
+    mood="";
+    $("moodText").textContent="таңдалмады";
+    document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));
+    $("oneSentence").value="";
+    $("exitTicket").value="";
+    $("studentName").value="";
+    $("studentClass").value="";
+    $("resultText").textContent="";
+    localStorage.removeItem("magnet_reflection_v1");
+  });
+
+  $("btnSend").addEventListener("click", ()=>{
+    const t = buildText();
+    const subject = encodeURIComponent("Рефлексия: Тұрақты магниттер");
+    const body = encodeURIComponent(t);
+
+    // 🔻 МІНДЕТТІ: мына email-ды өз email-ыңмен ауыстыр!
+    const to = "YOUR_EMAIL_HERE@gmail.com";
+
+    // mailto opens Gmail/Email app on phone
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+  });
+
+  loadScore();
+  load();
 </script>
 </body>
 </html>
